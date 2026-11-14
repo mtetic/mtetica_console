@@ -1,72 +1,57 @@
-// --- CARTUCCIA 002: CIRCA-CERCHIO ---
+// --- CARTUCCIA 002: chePOTENZA!!! ---
 
 window.UGOConsole.registerCartridge({
     id: 2,
-    titolo: "2. Circa-Cerchio",
-    colore: "#d97706",
+    titolo: "2. chePOTENZA!!!",
+    colore: "#3b82f6",
     avvia: function() {
         const slot = document.getElementById('cartridge-slot');
         let alive = true; // diventa false quando si esce dal gioco
 
         slot.innerHTML = `
-            <div id="game-container" style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 12px 12px calc(12px + env(safe-area-inset-bottom, 0px)) 12px; position: relative; transition: background-color 0.3s ease, border-color 0.3s ease; border: 8px solid transparent; box-sizing: border-box; overflow-y: auto; -webkit-overflow-scrolling: touch;">
-                <!-- Header STATS -->
-                <div class="header" style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.4); padding: 8px 12px; border-radius: 12px; flex-shrink: 0;">
-                    <div class="stat-box" style="text-align: center;">
-                        <div class="stat-label" style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: #aaa;">Tempo</div>
-                        <div class="stat-value" id="timer" style="font-size: 1.4rem; font-weight: 800;">90</div>
+            <div id="pot-container">
+                <!-- Barra compatta: tempo, punti, audio -->
+                <div id="pot-hud">
+                    <div class="pot-timer">Tempo: <span id="pot-timer-val">60</span>s</div>
+                    <div class="pot-score">Punti: <span id="pot-score-val">0</span></div>
+                    <button id="pot-audio" type="button">🔊</button>
+                </div>
+
+                <div id="pot-main">
+                    <div id="pot-screen">
+                        <div id="pot-question"></div>
+                        <div id="pot-buffer"></div>
                     </div>
-                    <div class="pi-banner" style="text-align: center; background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.5px;">π ≈ 3</div>
-                    <div class="stat-box" style="text-align: center;">
-                        <div class="stat-label" style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: #aaa;">Punti</div>
-                        <div class="stat-value" id="score" style="font-size: 1.4rem; font-weight: 800;">0</div>
+
+                    <!-- Tastierino: occupa lo spazio che resta e si adatta, così OK è sempre visibile -->
+                    <div id="pot-numpad">
+                        <button type="button" class="pot-key" data-k="1">1</button>
+                        <button type="button" class="pot-key" data-k="2">2</button>
+                        <button type="button" class="pot-key" data-k="3">3</button>
+                        <button type="button" class="pot-key" data-k="4">4</button>
+                        <button type="button" class="pot-key" data-k="5">5</button>
+                        <button type="button" class="pot-key" data-k="6">6</button>
+                        <button type="button" class="pot-key" data-k="7">7</button>
+                        <button type="button" class="pot-key" data-k="8">8</button>
+                        <button type="button" class="pot-key" data-k="9">9</button>
+                        <button type="button" class="pot-key pot-canc" data-k="C">C</button>
+                        <button type="button" class="pot-key" data-k="0">0</button>
+                        <button type="button" class="pot-key pot-ok" data-k="OK">OK</button>
                     </div>
                 </div>
 
-                <!-- Domanda e Input -->
-                <div class="question-container" style="text-align: center; margin: 6px 0; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 0;">
-                    <div id="badge-type" class="badge">--</div>
-                    <div id="question-text" class="question-text">Premi Inizia!</div>
-                    <div id="answer-display" class="answer-display">_</div>
+                <div id="pot-start" class="pot-overlay">
+                    <div class="pot-title">che<span>POTENZA!!!</span></div>
+                    <p>Trova l'elemento mancante contrassegnato dal punto di domanda (?). Rispondi a più domande possibili in 60 secondi!</p>
+                    <button type="button" class="btn-start" id="pot-btn-start">PARTI</button>
                 </div>
 
-                <!-- Tastierino Virtuale -->
-                <div class="keypad" style="flex-shrink: 0;">
-                    <button class="key" onclick="pressKey('1')">1</button>
-                    <button class="key" onclick="pressKey('2')">2</button>
-                    <button class="key" onclick="pressKey('3')">3</button>
-                    <button class="key" onclick="pressKey('4')">4</button>
-                    <button class="key" onclick="pressKey('5')">5</button>
-                    <button class="key" onclick="pressKey('6')">6</button>
-                    <button class="key" onclick="pressKey('7')">7</button>
-                    <button class="key" onclick="pressKey('8')">8</button>
-                    <button class="key" onclick="pressKey('9')">9</button>
-                    <button class="key key-del" onclick="pressKey('DEL')">←</button>
-                    <button class="key" onclick="pressKey('0')">0</button>
-                    <button class="key key-enter" onclick="pressKey('ENTER')">INVIO</button>
+                <div id="pot-end" class="pot-overlay" style="display:none;">
+                    <h2>Tempo Scaduto! 🎮</h2>
+                    <p style="font-size:1.3rem;">Punteggio totale: <b style="color:#22c55e;"><span id="pot-final-score">0</span> punti</b></p>
+                    <div id="pot-report"></div>
+                    <button type="button" class="btn-start" id="pot-btn-restart">GIOCA ANCORA</button>
                 </div>
-
-                <!-- Barra di sicurezza inferiore anti-sovrapposizione browser mobile -->
-                <div style="height: 16px; flex-shrink: 0; width: 100%;"></div>
-            </div>
-
-            <!-- Schermata Iniziale -->
-            <div id="start-overlay" class="overlay">
-                <h1>Circa-Cerchio</h1>
-                <p>Calcola le misure del cerchio usando <b>π ≈ 3</b>.<br><br>
-                🟢 Diretta: +1 pt<br>
-                🟠 Inversa: +2 pt<br>
-                🔴 MOSTRO: +4 pt<br><br>
-                Hai <b>90 secondi</b>!</p>
-                <button class="btn-start" id="btn-start-game">INIZIA GIOCO</button>
-            </div>
-
-            <!-- Schermata Finale -->
-            <div id="end-overlay" class="overlay hidden">
-                <h1>Tempo Scaduto!</h1>
-                <p>Punteggio Finale:</p>
-                <div id="final-score" style="font-size: 4rem; font-weight: 800; color: #2ea44f; margin-bottom: 20px;">0</div>
-                <button class="btn-start" id="btn-restart-game">GIOCA ANCORA</button>
             </div>
         `;
 
@@ -75,387 +60,440 @@ window.UGOConsole.registerCartridge({
         const styleCart = document.createElement('style');
         styleCart.id = 'style-cartuccia-2';
         styleCart.innerHTML = `
-            .state-diretta {
-                background-color: #0d2b1a !important;
-                border-color: #2ea44f !important;
+            #pot-container {
+                position: relative; width: 100%; height: 100%;
+                display: flex; flex-direction: column; gap: 8px;
+                padding: 8px; box-sizing: border-box;
+                background: #0f172a; color: #f8fafc; overflow: hidden;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             }
-            .state-inversa {
-                background-color: #3b2005 !important;
-                border-color: #d97706 !important;
+            #pot-hud {
+                flex: 0 0 auto; width: 100%; max-width: 560px; margin: 0 auto;
+                display: flex; justify-content: space-between; align-items: center; gap: 8px;
+                background: #334155; padding: 6px 12px; border-radius: 8px;
+                font-weight: bold; font-size: clamp(0.9rem, 3.2vh, 1.15rem); box-sizing: border-box;
             }
-            .state-mostro {
-                background-color: #3a080c !important;
-                border-color: #dc2626 !important;
-                animation: pulse-red 0.8s infinite alternate;
+            .pot-timer { color: #f43f5e; }
+            .pot-score { color: #22c55e; }
+            #pot-audio {
+                background: #1e293b; border: none; color: #fff; border-radius: 6px;
+                padding: 4px 10px; font-size: 1rem; cursor: pointer; touch-action: manipulation;
             }
-            @keyframes pulse-red {
-                0% { border-color: #dc2626; box-shadow: inset 0 0 15px #dc2626; }
-                100% { border-color: #991b1b; box-shadow: inset 0 0 35px #991b1b; }
+            #pot-main {
+                flex: 1 1 0; min-height: 0; width: 100%; max-width: 560px; margin: 0 auto;
+                display: flex; flex-direction: column; gap: 8px;
             }
-
-            .badge {
-                display: inline-block;
-                padding: 4px 12px;
-                border-radius: 12px;
-                font-size: 0.8rem;
-                font-weight: bold;
-                margin-bottom: 8px;
-                text-transform: uppercase;
+            #pot-screen {
+                flex: 1 1 0; min-height: 0;
+                background: #020617; border: 2px solid #475569; border-radius: 12px;
+                display: flex; flex-direction: column; justify-content: center; align-items: center;
+                padding: 4px 8px; box-sizing: border-box; transition: border-color 0.15s;
             }
-            .badge-diretta { background: #2ea44f; color: #fff; }
-            .badge-inversa { background: #d97706; color: #fff; }
-            .badge-mostro { background: #dc2626; color: #fff; }
-
-            .question-text {
-                font-size: 1.35rem;
-                font-weight: 700;
-                line-height: 1.3;
-                min-height: 50px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
+            #pot-screen.ok { border-color: #22c55e; }
+            #pot-screen.ko { border-color: #ef4444; }
+            #pot-question { font-size: clamp(1.6rem, 7vh, 2.6rem); font-weight: bold; letter-spacing: 2px; text-align: center; }
+            #pot-question sup { font-size: 0.65em; line-height: 0; }
+            #pot-buffer { font-size: clamp(1.3rem, 5.5vh, 2rem); color: #3b82f6; font-weight: bold; margin-top: 6px; min-height: 1.3em; }
+            #pot-numpad {
+                flex: 1.7 1 0; min-height: 0;
+                display: grid; grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(4, minmax(0, 1fr)); gap: 8px;
             }
-
-            .answer-display {
-                background: rgba(0,0,0,0.6);
-                border: 2px solid rgba(255,255,255,0.2);
-                border-radius: 12px;
-                height: 50px;
-                width: 100%;
-                max-width: 260px;
-                margin: 10px auto 0 auto;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 2rem;
-                font-weight: 800;
-                letter-spacing: 2px;
-                color: #00ffcc;
-            }
-
-            .keypad {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 8px;
-                width: 100%;
-                max-width: 340px;
-                margin: 0 auto;
-            }
-
-            .key {
-                background: rgba(255,255,255,0.12);
-                border: none;
-                border-radius: 10px;
-                color: #fff;
-                font-size: 1.5rem;
-                font-weight: 700;
-                height: 50px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                transition: background 0.1s;
+            .pot-key {
+                width: 100%; height: 100%; padding: 0;
+                background: #334155; color: #fff; border: none; border-radius: 10px;
+                font-size: clamp(1.1rem, 5vh, 1.9rem); font-weight: bold; cursor: pointer;
                 touch-action: manipulation;
-                -webkit-tap-highlight-color: transparent;
             }
-            .key:active { background: rgba(255,255,255,0.3); }
-            .key-del { background: rgba(220, 38, 38, 0.4); }
-            .key-enter { background: rgba(46, 164, 79, 0.6); grid-column: span 2; }
+            .pot-key:active { background: #475569; }
+            .pot-canc { background: #64748b; }
+            .pot-ok { background: #22c55e; }
+            .pot-ok:active { background: #16a34a; }
 
-            .overlay {
-                position: absolute;
-                top: 0; left: 0; right: 0; bottom: 0;
-                background: #121212;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                padding: 25px;
-                text-align: center;
-                z-index: 10;
+            .pot-overlay {
+                position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(15, 23, 42, 0.96); z-index: 10;
+                display: flex; flex-direction: column; align-items: center; justify-content: center;
+                gap: 14px; padding: 16px; box-sizing: border-box; text-align: center; overflow-y: auto;
             }
-            .overlay h1 { font-size: 2.2rem; margin-bottom: 10px; color: #2ea44f; }
-            .overlay p { font-size: 0.95rem; color: #ccc; margin-bottom: 20px; max-width: 320px; line-height: 1.4; }
+            .pot-overlay p { color: #94a3b8; max-width: 440px; line-height: 1.45; margin: 0; font-size: clamp(0.95rem, 2.8vh, 1.15rem); }
+            .pot-overlay h2 { color: #38bdf8; margin: 0; font-size: clamp(1.5rem, 5vh, 2.2rem); }
+            .pot-title { font-size: clamp(1.8rem, 7vh, 2.6rem); font-weight: 900; color: #3b82f6; text-shadow: 0 0 10px rgba(59,130,246,0.5); letter-spacing: 1px; }
+            .pot-title span { color: #f43f5e; }
+            .pot-overlay .btn-start { background: #3b82f6; box-shadow: 0 4px 14px rgba(59,130,246,0.4); }
 
-            .btn-start {
-                background: #2ea44f;
-                color: white;
-                border: none;
-                padding: 14px 32px;
-                font-size: 1.2rem;
-                font-weight: 800;
-                border-radius: 30px;
-                cursor: pointer;
-                text-transform: uppercase;
-                box-shadow: 0 4px 15px rgba(46, 164, 79, 0.4);
+            #pot-report {
+                width: 100%; max-width: 520px; max-height: 42%;
+                overflow-y: auto; -webkit-overflow-scrolling: touch;
+                background: rgba(30, 41, 59, 0.85); border-radius: 10px; padding: 8px 12px;
+                box-sizing: border-box; text-align: left; color: #cbd5e1;
+                font-size: clamp(0.8rem, 2.4vh, 0.95rem); line-height: 1.45;
             }
+            .pot-rep-head { margin-bottom: 6px; }
+            .pot-rep-title { color: #fbbf24; font-weight: bold; margin-bottom: 4px; }
+            .pot-rep-item { margin-bottom: 10px; }
+            .pot-rep-q { font-size: 1.2em; font-weight: bold; color: #f8fafc; }
+            .pot-rep-sp { color: #94a3b8; }
 
-            .hidden { display: none !important; }
+            /* Telefono in orizzontale: schermo a sinistra, tastierino a destra */
+            @media (orientation: landscape) and (max-height: 520px) {
+                #pot-main { flex-direction: row; }
+                #pot-screen { flex: 1 1 0; }
+                #pot-numpad { flex: 1 1 0; }
+            }
         `;
         document.head.appendChild(styleCart);
 
-        let score = 0;
-        let timeLeft = 90;
+        // --- STATO ---
+        let punteggio = 0;
+        let tempoRimasto = 60;
         let timerInterval = null;
-        let currentAnswer = 0;
-        let currentPoints = 1;
-        let userInputValue = "";
+        let musicInterval = null;
+        let rispostaCorretta = "";
+        let inputUtente = "";
+        let modalitaCorrente = "STANDARD";
+        let giocoAttivo = false;
+        let ultimaDomanda = "";
+        let notaCorrente = 0;
+        let flashTimeout = null;
 
+        // Report finale
+        let errori = {};              // domanda -> dettagli dell'errore
+        let giuste = 0;
+        let sbagliate = 0;
+        let spiegazioneCorrente = "";
+        let rispostaMostrata = "";
+
+        // --- AUDIO ---
         let audioCtx = null;
-        let musicOsc = null;
-        let musicGain = null;
-        let sirenOsc = null;
-        let sirenGain = null;
-        let audioTimer = null;
+        let audioAbilitato = true;
 
         function initAudio() {
             if (!audioCtx) {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                audioCtx = new AudioContext();
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (audioCtx.state === 'suspended') audioCtx.resume();
         }
 
-        function playMusicState(type) {
-            if (!audioCtx || !alive) return;
-            stopAudio();
+        function suonaNota(frequenza, durata, tipo, volume) {
+            if (!audioAbilitato || !audioCtx) return;
+            try {
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                osc.type = tipo || 'sine';
+                osc.frequency.value = frequenza;
+                gainNode.gain.setValueAtTime(volume || 0.1, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.00001, now + durata);
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + durata);
+            } catch (e) {}
+        }
 
-            if (type === 'diretta' || type === 'inversa') {
-                musicOsc = audioCtx.createOscillator();
-                musicGain = audioCtx.createGain();
-                
-                musicOsc.type = 'triangle';
-                let speed = type === 'diretta' ? 400 : 200;
-                let baseFreq = type === 'diretta' ? 220 : 330;
-
-                musicGain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                musicOsc.connect(musicGain);
-                musicGain.connect(audioCtx.destination);
-                musicOsc.start();
-
-                let stepIdx = 0;
-                const notes = [0, 4, 7, 12, 7, 4];
-                audioTimer = setInterval(() => {
-                    if (!alive || !musicOsc) return;
-                    let freq = baseFreq * Math.pow(2, notes[stepIdx % notes.length] / 12);
-                    musicOsc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                    stepIdx++;
-                }, speed);
-
-            } else if (type === 'mostro') {
-                sirenOsc = audioCtx.createOscillator();
-                sirenGain = audioCtx.createGain();
-
-                sirenOsc.type = 'sawtooth';
-                sirenGain.gain.setValueAtTime(0.12, audioCtx.currentTime);
-
-                sirenOsc.connect(sirenGain);
-                sirenGain.connect(audioCtx.destination);
-                sirenOsc.start();
-
-                let high = false;
-                audioTimer = setInterval(() => {
-                    if (!alive || !sirenOsc) return;
-                    let targetFreq = high ? 800 : 400;
-                    sirenOsc.frequency.exponentialRampToValueAtTime(targetFreq, audioCtx.currentTime + 0.25);
-                    high = !high;
-                }, 300);
+        function suonaEsito(corretto) {
+            if (corretto) {
+                suonaNota(523.25, 0.1, 'triangle', 0.15);
+                setTimeout(function() { if (alive) suonaNota(659.25, 0.15, 'triangle', 0.15); }, 60);
+            } else {
+                suonaNota(180, 0.25, 'sawtooth', 0.2);
             }
         }
 
-        function stopAudio() {
-            if (audioTimer) { clearInterval(audioTimer); audioTimer = null; }
-            if (musicOsc) { try { musicOsc.stop(); } catch(e){} musicOsc = null; }
-            if (sirenOsc) { try { sirenOsc.stop(); } catch(e){} sirenOsc = null; }
-        }
-
-        function updateConsoleStats() {
-            if (window.UGOConsole) {
-                window.UGOConsole.setTitle("Circa-Cerchio");
-                window.UGOConsole.setScore(score);
-                if (window.UGOConsole.setTimerLabel) window.UGOConsole.setTimerLabel("Tempo");
-                window.UGOConsole.setTimer(timeLeft + "s");
-            }
-        }
-
-        function startGame() {
-            initAudio();
-            score = 0;
-            timeLeft = 90;
-            userInputValue = "";
-            
-            document.getElementById('score').textContent = score;
-            document.getElementById('timer').textContent = timeLeft;
-            updateConsoleStats();
-
-            document.getElementById('start-overlay').classList.add('hidden');
-            document.getElementById('end-overlay').classList.add('hidden');
-
-            generateQuestion();
-
-            if (timerInterval) clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                if (!alive) return;
-                timeLeft--;
-                const tEl = document.getElementById('timer');
-                if (tEl) tEl.textContent = timeLeft;
-                updateConsoleStats();
-                if (timeLeft <= 0) {
-                    endGame();
+        function farPartireMusica() {
+            if (musicInterval) clearInterval(musicInterval);
+            const noteMusica = [261.63, 329.63, 392.00, 329.63, 293.66, 349.23, 440.00, 349.23];
+            notaCorrente = 0;
+            musicInterval = setInterval(function() {
+                if (audioAbilitato && audioCtx && giocoAttivo) {
+                    suonaNota(noteMusica[notaCorrente % noteMusica.length], 0.2, 'sine', 0.03);
+                    notaCorrente++;
                 }
+            }, 400);
+        }
+
+        function toggleAudio() {
+            audioAbilitato = !audioAbilitato;
+            document.getElementById("pot-audio").textContent = audioAbilitato ? "🔊" : "🔇";
+            if (audioAbilitato) initAudio();
+        }
+
+        // --- DOMANDE ---
+        function sup(x) { return "<sup>" + x + "</sup>"; }
+        function prodotto(b, e) {
+            const f = [];
+            for (let i = 0; i < e; i++) f.push(b);
+            return f.join(" × ");
+        }
+
+        function generaDomandaPotenza() {
+            modalitaCorrente = "STANDARD";
+
+            const combinazioni = [
+                {b: 2, e: 0, v: 1}, {b: 3, e: 0, v: 1}, {b: 5, e: 0, v: 1}, {b: 10, e: 0, v: 1}, {b: 8, e: 0, v: 1},
+                {b: 2, e: 1, v: 2}, {b: 4, e: 1, v: 4}, {b: 7, e: 1, v: 7}, {b: 10, e: 1, v: 10}, {b: 15, e: 1, v: 15},
+                {b: 0, e: 2, v: 0}, {b: 0, e: 5, v: 0}, {b: 0, e: 3, v: 0},
+                {b: 1, e: 4, v: 1}, {b: 1, e: 9, v: 1},
+                {b: 10, e: 2, v: 100}, {b: 10, e: 3, v: 1000}, {b: 10, e: 4, v: 10000}, {b: 10, e: 5, v: 100000},
+                {b: 2, e: 2, v: 4}, {b: 2, e: 3, v: 8}, {b: 2, e: 4, v: 16}, {b: 2, e: 5, v: 32}, {b: 2, e: 6, v: 64},
+                {b: 3, e: 2, v: 9}, {b: 3, e: 3, v: 27}, {b: 3, e: 4, v: 81},
+                {b: 4, e: 2, v: 16}, {b: 4, e: 3, v: 64},
+                {b: 5, e: 2, v: 25}, {b: 5, e: 3, v: 125},
+                {b: 6, e: 2, v: 36}, {b: 7, e: 2, v: 49}, {b: 8, e: 2, v: 64}, {b: 9, e: 2, v: 81}
+            ];
+
+            if (Math.random() < 0.12) {
+                modalitaCorrente = "JOLLY_UNO";
+                spiegazioneCorrente = "1 elevato a qualsiasi esponente fa sempre 1.";
+                rispostaMostrata = "qualsiasi numero";
+                return `1<sup>?</sup> = 1`;
+            }
+
+            const scelta = combinazioni[Math.floor(Math.random() * combinazioni.length)];
+            const b = scelta.b, e = scelta.e, v = scelta.v;
+            const tipoIncognita = Math.floor(Math.random() * 3);
+
+            if (tipoIncognita === 0) {
+                // ?^e = v  (manca la base)
+                if (e === 0 && v === 1) {
+                    modalitaCorrente = "JOLLY_ESP_ZERO";
+                    spiegazioneCorrente = "Ogni numero diverso da 0 elevato a 0 fa 1. Il caso 0" + sup(0) + " non ha significato, quindi 0 non va bene.";
+                    rispostaMostrata = "qualsiasi numero diverso da 0";
+                    return `?<sup>0</sup> = 1`;
+                }
+                rispostaCorretta = String(b);
+                rispostaMostrata = String(b);
+                if (e === 1) {
+                    spiegazioneCorrente = "Un numero elevato a 1 resta uguale a sé stesso: ?" + sup(1) + " = " + v + ", quindi la base è " + b + ".";
+                } else if (b === 0) {
+                    spiegazioneCorrente = "0 elevato a un esponente maggiore di 0 fa sempre 0, quindi la base è 0.";
+                } else if (b === 1) {
+                    spiegazioneCorrente = "1 elevato a qualsiasi esponente fa sempre 1, quindi la base è 1.";
+                } else {
+                    spiegazioneCorrente = "Cerchi il numero che, usato " + e + " volte in una moltiplicazione, dà " + v + ": " + prodotto(b, e) + " = " + v + ". La base è " + b + ".";
+                }
+                return `?<sup>${e}</sup> = ${v}`;
+
+            } else if (tipoIncognita === 1) {
+                // b^? = v  (manca l'esponente)
+                if (b === 0 && v === 0) {
+                    modalitaCorrente = "JOLLY_BASE_ZERO";
+                    spiegazioneCorrente = "0 elevato a un esponente maggiore di 0 fa 0. Con esponente 0 invece 0" + sup(0) + " non ha significato.";
+                    rispostaMostrata = "qualsiasi numero maggiore di 0";
+                    return `0<sup>?</sup> = 0`;
+                }
+                if (b === 1) {
+                    // 1 elevato a qualsiasi esponente fa 1: va accettata qualunque risposta
+                    modalitaCorrente = "JOLLY_UNO";
+                    spiegazioneCorrente = "1 elevato a qualsiasi esponente fa sempre 1.";
+                    rispostaMostrata = "qualsiasi numero";
+                    return `1<sup>?</sup> = 1`;
+                }
+                rispostaCorretta = String(e);
+                rispostaMostrata = String(e);
+                if (e === 0) {
+                    spiegazioneCorrente = "Un numero (diverso da 0) elevato a 0 fa 1, quindi l'esponente è 0.";
+                } else if (e === 1) {
+                    spiegazioneCorrente = b + " elevato a 1 resta " + b + ", quindi l'esponente è 1.";
+                } else {
+                    spiegazioneCorrente = "Quante volte serve scrivere " + b + " per ottenere " + v + "? " + prodotto(b, e) + " = " + v + ": sono " + e + " volte, quindi l'esponente è " + e + ".";
+                }
+                return `${b}<sup>?</sup> = ${v}`;
+
+            } else {
+                // b^e = ?  (manca il risultato)
+                rispostaCorretta = String(v);
+                rispostaMostrata = String(v);
+                if (e === 0) {
+                    spiegazioneCorrente = "Un numero (diverso da 0) elevato a 0 fa sempre 1.";
+                } else if (e === 1) {
+                    spiegazioneCorrente = "Un numero elevato a 1 resta uguale a sé stesso: " + b + sup(1) + " = " + b + ".";
+                } else if (b === 0) {
+                    spiegazioneCorrente = "0 elevato a un esponente maggiore di 0 fa sempre 0.";
+                } else if (b === 1) {
+                    spiegazioneCorrente = "1 elevato a qualsiasi esponente fa sempre 1.";
+                } else {
+                    spiegazioneCorrente = "La base " + b + " va moltiplicata per sé stessa " + e + " volte: " + prodotto(b, e) + " = " + v + ".";
+                }
+                return `${b}<sup>${e}</sup> = ?`;
+            }
+        }
+
+        function registraErrore() {
+            const k = ultimaDomanda;
+            if (!errori[k]) {
+                errori[k] = { q: ultimaDomanda, dato: inputUtente, giusta: rispostaMostrata, spieg: spiegazioneCorrente, n: 0 };
+            }
+            errori[k].n++;
+            errori[k].dato = inputUtente;
+        }
+
+        function costruisciReport() {
+            const box = document.getElementById("pot-report");
+            if (!box) return;
+            let h = '<div class="pot-rep-head">Giuste: <b>' + giuste + '</b> · Sbagliate: <b>' + sbagliate + '</b></div>';
+            const chiavi = Object.keys(errori);
+            if (chiavi.length === 0) {
+                h += '<div><b>Nessun errore: perfetto!</b></div>';
+            } else {
+                h += '<div class="pot-rep-title">Da ripassare:</div>';
+                chiavi.forEach(function(k) {
+                    const x = errori[k];
+                    h += '<div class="pot-rep-item"><div class="pot-rep-q">' + x.q + '</div>' +
+                         '<div>Hai scritto: <b>' + x.dato + '</b> · Giusto: <b>' + x.giusta + '</b>' + (x.n > 1 ? ' (×' + x.n + ')' : '') + '</div>' +
+                         '<div class="pot-rep-sp">' + x.spieg + '</div></div>';
+                });
+            }
+            box.innerHTML = h;
+        }
+
+        // --- FLUSSO ---
+        function mostraStatoConsole() {
+            if (window.UGOConsole) {
+                window.UGOConsole.setTitle("chePOTENZA!!!");
+                window.UGOConsole.setScore(punteggio);
+                window.UGOConsole.setTimer(tempoRimasto + "s");
+            }
+        }
+
+        function iniziaGioco() {
+            initAudio();
+            punteggio = 0;
+            tempoRimasto = 60;
+            inputUtente = "";
+            giocoAttivo = true;
+            ultimaDomanda = "";
+            errori = {};
+            giuste = 0;
+            sbagliate = 0;
+            document.getElementById("pot-score-val").textContent = punteggio;
+            document.getElementById("pot-timer-val").textContent = tempoRimasto;
+            document.getElementById("pot-buffer").textContent = "";
+            document.getElementById("pot-start").style.display = "none";
+            document.getElementById("pot-end").style.display = "none";
+            mostraStatoConsole();
+
+            prossimaDomanda();
+            farPartireMusica();
+
+            clearInterval(timerInterval);
+            timerInterval = setInterval(function() {
+                tempoRimasto--;
+                document.getElementById("pot-timer-val").textContent = Math.max(0, tempoRimasto);
+                mostraStatoConsole();
+                if (tempoRimasto <= 0) fineGioco();
             }, 1000);
         }
 
-        function generateQuestion() {
-            if (!alive) return;
-            userInputValue = "";
-            updateDisplay();
+        function prossimaDomanda() {
+            inputUtente = "";
+            document.getElementById("pot-buffer").textContent = "";
+            // Evita di ripetere subito la stessa domanda
+            let testo = generaDomandaPotenza();
+            for (let i = 0; i < 10 && testo === ultimaDomanda; i++) testo = generaDomandaPotenza();
+            ultimaDomanda = testo;
+            document.getElementById("pot-question").innerHTML = testo;
+        }
 
-            const rand = Math.random() * 100;
-            let category = "";
+        function lampeggia(ok) {
+            const sc = document.getElementById("pot-screen");
+            sc.classList.remove("ok", "ko");
+            sc.classList.add(ok ? "ok" : "ko");
+            if (flashTimeout) clearTimeout(flashTimeout);
+            flashTimeout = setTimeout(function() {
+                if (alive) sc.classList.remove("ok", "ko");
+            }, 250);
+        }
 
-            if (rand < 50) {
-                category = "diretta";
-            } else if (rand < 85) {
-                category = "inversa";
+        function premiCifra(n) {
+            if (!giocoAttivo) return;
+            initAudio();
+            suonaNota(440, 0.04, 'sine', 0.05);
+            if (inputUtente.length < 6) {
+                inputUtente += String(n);
+                document.getElementById("pot-buffer").textContent = inputUtente;
+            }
+        }
+
+        function cancella() {
+            if (!giocoAttivo) return;
+            inputUtente = inputUtente.slice(0, -1);
+            document.getElementById("pot-buffer").textContent = inputUtente;
+        }
+
+        function conferma() {
+            if (!giocoAttivo || inputUtente === "") return;
+            let esitoCorretto = false;
+            const valoreInserito = parseInt(inputUtente, 10);
+
+            if (modalitaCorrente === "JOLLY_UNO") {
+                esitoCorretto = true;
+            } else if (modalitaCorrente === "JOLLY_BASE_ZERO") {
+                esitoCorretto = (valoreInserito > 0);
+            } else if (modalitaCorrente === "JOLLY_ESP_ZERO") {
+                esitoCorretto = (valoreInserito !== 0);
             } else {
-                category = "mostro";
+                esitoCorretto = (String(valoreInserito) === rispostaCorretta);
             }
 
-            let r = Math.floor(Math.random() * 10) + 1;
-            let d = r * 2;
-            let c = 3 * d;
-            let a = 3 * r * r;
-
-            let qText = "";
-            let ans = 0;
-
-            if (category === "diretta") {
-                currentPoints = 1;
-                const sub = Math.floor(Math.random() * 4);
-                if (sub === 0) { qText = `Raggio = ${r}<br>Circonferenza ≈ ?`; ans = c; }
-                else if (sub === 1) { qText = `Raggio = ${r}<br>Area ≈ ?`; ans = a; }
-                else if (sub === 2) { qText = `Diametro = ${d}<br>Circonferenza ≈ ?`; ans = c; }
-                else { qText = `Diametro = ${d}<br>Area ≈ ?`; ans = a; }
-
-            } else if (category === "inversa") {
-                currentPoints = 2;
-                const sub = Math.floor(Math.random() * 4);
-                if (sub === 0) { qText = `Circonferenza = ${c}<br>Raggio ≈ ?`; ans = r; }
-                else if (sub === 1) { qText = `Circonferenza = ${c}<br>Diametro ≈ ?`; ans = d; }
-                else if (sub === 2) { qText = `Area = ${a}<br>Raggio ≈ ?`; ans = r; }
-                else { qText = `Area = ${a}<br>Diametro ≈ ?`; ans = d; }
-
-            } else if (category === "mostro") {
-                currentPoints = 4;
-                const sub = Math.floor(Math.random() * 2);
-                if (sub === 0) { qText = `👹 MOSTRO!<br>Area = ${a}<br>Circonferenza ≈ ?`; ans = c; }
-                else { qText = `👹 MOSTRO!<br>Circonferenza = ${c}<br>Area ≈ ?`; ans = a; }
-            }
-
-            currentAnswer = ans;
-            applyStyleAndAudio(category);
-
-            const qEl = document.getElementById('question-text');
-            if (qEl) qEl.innerHTML = qText;
-        }
-
-        function applyStyleAndAudio(category) {
-            const container = document.getElementById('game-container');
-            const badge = document.getElementById('badge-type');
-
-            if (container) container.className = "";
-            if (badge) badge.className = "badge";
-
-            if (category === "diretta") {
-                if (container) container.classList.add('state-diretta');
-                if (badge) { badge.classList.add('badge-diretta'); badge.textContent = "Diretta (+1 pt)"; }
-            } else if (category === "inversa") {
-                if (container) container.classList.add('state-inversa');
-                if (badge) { badge.classList.add('badge-inversa'); badge.textContent = "Inversa (+2 pt)"; }
-            } else if (category === "mostro") {
-                if (container) container.classList.add('state-mostro');
-                if (badge) { badge.classList.add('badge-mostro'); badge.textContent = "👹 MOSTRO (+4 pt)"; }
-            }
-
-            playMusicState(category);
-        }
-
-        function pressKey(val) {
-            if (!alive) return;
-            if (val === 'DEL') {
-                userInputValue = userInputValue.slice(0, -1);
-            } else if (val === 'ENTER') {
-                checkAnswer();
-                return;
+            if (esitoCorretto) {
+                punteggio++;
+                giuste++;
+                document.getElementById("pot-score-val").textContent = punteggio;
+                mostraStatoConsole();
             } else {
-                if (userInputValue.length < 5) {
-                    userInputValue += val;
-                }
+                sbagliate++;
+                registraErrore();
             }
-            updateDisplay();
+            suonaEsito(esitoCorretto);
+            lampeggia(esitoCorretto);
+            prossimaDomanda();
         }
 
-        window.pressKey = pressKey;
-
-        function updateDisplay() {
-            const disp = document.getElementById('answer-display');
-            if (disp) disp.textContent = userInputValue === "" ? "_" : userInputValue;
+        function fineGioco() {
+            giocoAttivo = false;
+            clearInterval(timerInterval);
+            clearInterval(musicInterval);
+            suonaNota(120, 0.6, 'sawtooth', 0.25);
+            document.getElementById("pot-final-score").textContent = punteggio;
+            costruisciReport();
+            document.getElementById("pot-end").style.display = "flex";
         }
 
-        function checkAnswer() {
-            if (userInputValue === "") return;
+        // --- INPUT: tastierino a schermo ---
+        document.getElementById("pot-numpad").addEventListener("click", function(e) {
+            const b = e.target.closest ? e.target.closest("button") : null;
+            if (!b) return;
+            const k = b.getAttribute("data-k");
+            if (k === "OK") conferma();
+            else if (k === "C") cancella();
+            else premiCifra(k);
+        });
 
-            let userNum = parseInt(userInputValue, 10);
-            if (userNum === currentAnswer) {
-                score += currentPoints;
-                const scoreEl = document.getElementById('score');
-                if (scoreEl) scoreEl.textContent = score;
-                updateConsoleStats();
-            }
-            generateQuestion();
-        }
+        document.getElementById("pot-audio").addEventListener("click", toggleAudio);
+        document.getElementById("pot-btn-start").addEventListener("click", iniziaGioco);
+        document.getElementById("pot-btn-restart").addEventListener("click", iniziaGioco);
 
-        // Gestione tastiera fisica pulita e isolata
-        if (window.__circaKeyHandler) window.removeEventListener('keydown', window.__circaKeyHandler);
-        window.__circaKeyHandler = function(e) {
-            if (!alive || !document.getElementById('game-container')) return;
-            const startOverlay = document.getElementById('start-overlay');
-            const endOverlay = document.getElementById('end-overlay');
-            if (startOverlay && endOverlay && startOverlay.classList.contains('hidden') && endOverlay.classList.contains('hidden')) {
-                if (e.key >= '0' && e.key <= '9') {
-                    pressKey(e.key);
-                    e.preventDefault();
-                } else if (e.key === 'Backspace') {
-                    pressKey('DEL');
-                    e.preventDefault();
-                } else if (e.key === 'Enter') {
-                    pressKey('ENTER');
-                    e.preventDefault();
-                }
-            }
+        // --- INPUT: tastiera fisica (cifre, Invio, Backspace) ---
+        if (window.__potKeyHandler) window.removeEventListener('keydown', window.__potKeyHandler);
+        window.__potKeyHandler = function(e) {
+            if (!alive || !giocoAttivo || !document.getElementById('pot-container')) return;
+            if (e.key >= '0' && e.key <= '9') { premiCifra(e.key); e.preventDefault(); }
+            else if (e.key === 'Backspace' || e.key === 'Delete') { cancella(); e.preventDefault(); }
+            else if (e.key === 'Enter') { conferma(); e.preventDefault(); }
         };
-        window.addEventListener('keydown', window.__circaKeyHandler);
+        window.addEventListener('keydown', window.__potKeyHandler);
 
-        function endGame() {
-            if (!alive) return;
-            if (timerInterval) clearInterval(timerInterval);
-            stopAudio();
-            const finalScoreEl = document.getElementById('final-score');
-            if (finalScoreEl) finalScoreEl.textContent = score;
-            const endOverlayEl = document.getElementById('end-overlay');
-            if (endOverlayEl) endOverlayEl.classList.remove('hidden');
-        }
-
-        // Pulizia totale quando si esce dal gioco (tasto Menu della console)
+        // --- PULIZIA quando si esce dal gioco (tasto Menu della console) ---
         if (window.UGOConsole.onExit) {
             window.UGOConsole.onExit(function() {
                 alive = false;
+                giocoAttivo = false;
                 if (timerInterval) clearInterval(timerInterval);
-                stopAudio();
-                window.removeEventListener('keydown', window.__circaKeyHandler);
+                if (musicInterval) clearInterval(musicInterval);
+                if (flashTimeout) clearTimeout(flashTimeout);
+                window.removeEventListener('keydown', window.__potKeyHandler);
                 try { if (audioCtx && audioCtx.close) audioCtx.close(); } catch (e) {}
                 audioCtx = null;
                 const st = document.getElementById('style-cartuccia-2');
@@ -463,9 +501,6 @@ window.UGOConsole.registerCartridge({
             });
         }
 
-        const btnStart = document.getElementById('btn-start-game');
-        const btnRestart = document.getElementById('btn-restart-game');
-        if (btnStart) btnStart.addEventListener('click', startGame);
-        if (btnRestart) btnRestart.addEventListener('click', startGame);
+        mostraStatoConsole();
     }
 });
