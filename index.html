@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Progetto Console - Didattica</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            touch-action: manipulation; /* niente zoom col doppio tocco */
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+
+        #console-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+        }
+        /* Browser recenti: altezza reale visibile (utile su iPhone con barra di Safari) */
+        @supports (height: 100dvh) {
+            html, body, #console-container { height: 100dvh; }
+        }
+
+        /* --- HEADER FISSO --- */
+        #console-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            min-height: 70px;
+            padding: env(safe-area-inset-top) 24px 0 24px;
+            background-color: #1e293b;
+            border-bottom: 3px solid #334155;
+            flex-shrink: 0;
+        }
+
+        .header-title {
+            flex: 1 1 auto;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            color: #38bdf8;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 1.25rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .stat-box {
+            background-color: #0f172a;
+            padding: 6px 16px;
+            border-radius: 8px;
+            border: 2px solid #334155;
+            white-space: nowrap;
+        }
+
+        .stat-time { color: #ef4444; }
+
+        #btn-fullscreen, #btn-menu, #btn-menu-float {
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+        #btn-fullscreen { background-color: #0284c7; }
+        #btn-fullscreen:hover { background-color: #0369a1; }
+        #btn-menu { background-color: #7c3aed; display: none; }
+        #btn-menu:hover { background-color: #6d28d9; }
+
+        /* Menu fluttuante: compare solo in tutto schermo, dentro un gioco */
+        #btn-menu-float {
+            display: none;
+            position: absolute;
+            top: calc(8px + env(safe-area-inset-top));
+            left: 8px;
+            z-index: 50;
+            background-color: rgba(124, 58, 237, 0.75);
+            padding: 8px 12px;
+            font-size: 0.9rem;
+        }
+
+        /* --- AREA CENTRALE (SLOT DELLA CARTUCCIA) --- */
+        #cartridge-slot {
+            flex-grow: 1;
+            position: relative;
+            background-color: #090d16;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            touch-action: manipulation;
+            min-height: 0;
+        }
+
+        /* --- PULSANTE STANDARD DEI GIOCHI --- */
+        .btn-start {
+            background: #8b5cf6;
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            padding: 16px 36px;
+            font-size: 1.3rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px rgba(0, 0, 0, 0.35);
+        }
+        .btn-start:active { transform: translateY(2px); box-shadow: 0 2px rgba(0, 0, 0, 0.35); }
+
+        /* --- STATI (gestiti da JS, funzionano anche su browser vecchi) --- */
+        body.in-game #btn-menu { display: inline-block; }
+        body.is-fullscreen #console-header { display: none; }
+        body.in-game.is-fullscreen #btn-menu-float { display: block; }
+
+        /* --- SCHERMI STRETTI (telefono in verticale) --- */
+        @media (max-width: 700px) {
+            #console-header { min-height: 52px; padding-left: 8px; padding-right: 8px; gap: 6px; }
+            .header-title { font-size: 0.95rem; }
+            .header-stats { gap: 6px; font-size: 0.8rem; }
+            .stat-box { padding: 3px 8px; border-width: 1px; }
+            #btn-fullscreen, #btn-menu { padding: 7px 10px; font-size: 0.8rem; }
+        }
+        /* --- SCHERMI BASSI (telefono in orizzontale) --- */
+        @media (max-height: 500px) {
+            #console-header { min-height: 46px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="console-container">
+        <!-- BARRA SUPERIORE -->
+        <header id="console-header">
+            <div class="header-title" id="console-title">Progetto Console - Menu</div>
+            <div class="header-stats">
+                <div class="stat-box"><span id="score-label">Punti</span>: <span id="score-val">0</span></div>
+                <div class="stat-box"><span id="timer-label">Tempo</span>: <span id="timer-val" class="stat-time">--</span></div>
+            </div>
+            <button id="btn-menu" type="button">&#9776; Menu</button>
+            <button id="btn-fullscreen" type="button">Tutto Schermo</button>
+        </header>
+
+        <!-- MENU FLUTTUANTE (solo in tutto schermo, dentro un gioco) -->
+        <button id="btn-menu-float" type="button">&#9776; Menu</button>
+
+        <!-- AREA CENTRALE (SLOT DELLA CARTUCCIA) -->
+        <main id="cartridge-slot">
+            <div style="color:#94a3b8; font-size:1.2rem;">Caricamento...</div>
+        </main>
+    </div>
+
+    <script>
+        // --- GESTIONE FULLSCREEN (con alternative per iPad e browser vecchi) ---
+        var btnFullscreen = document.getElementById('btn-fullscreen');
+        var rootEl = document.documentElement;
+        var reqFs = rootEl.requestFullscreen || rootEl.webkitRequestFullscreen;
+        var exitFs = document.exitFullscreen || document.webkitExitFullscreen;
+
+        function isFullscreen() {
+            return !!(document.fullscreenElement || document.webkitFullscreenElement);
+        }
+
+        // Dove il tutto schermo non esiste (es. iPhone) il tasto sparisce
+        if (!reqFs) {
+            btnFullscreen.style.display = 'none';
+        }
+
+        btnFullscreen.addEventListener('click', function() {
+            try {
+                if (!isFullscreen()) {
+                    var p = reqFs.call(rootEl);
+                    if (p && p.catch) p.catch(function() {});
+                } else if (exitFs) {
+                    exitFs.call(document);
+                }
+            } catch (err) {
+                console.error('Tutto schermo non disponibile: ' + err.message);
+            }
+        });
+
+        function aggiornaStatoFullscreen() {
+            document.body.classList.toggle('is-fullscreen', isFullscreen());
+        }
+        document.addEventListener('fullscreenchange', aggiornaStatoFullscreen);
+        document.addEventListener('webkitfullscreenchange', aggiornaStatoFullscreen);
+
+        // --- TASTI MENU ---
+        function tornaAlMenu() { window.UGOConsole.returnToMenu(); }
+        document.getElementById('btn-menu').addEventListener('click', tornaAlMenu);
+        document.getElementById('btn-menu-float').addEventListener('click', tornaAlMenu);
+
+        // --- API GLOBALE DEL GUSCIO ---
+        window.UGOConsole = {
+            setTitle: function(title) {
+                document.getElementById('console-title').textContent = title;
+            },
+            setScore: function(score) {
+                document.getElementById('score-val').textContent = score;
+            },
+            setTimer: function(timeText) {
+                document.getElementById('timer-val').textContent = timeText;
+            },
+            // Cambia la scritta davanti al valore (di default "Tempo")
+            setTimerLabel: function(label) {
+                document.getElementById('timer-label').textContent = label;
+            },
+            // Usata dal launcher: mostra/nasconde il tasto Menu
+            setInGame: function(inGame) {
+                document.body.classList.toggle('in-game', !!inGame);
+            },
+
+            // Pulizia all'uscita: ogni cartuccia può registrare qui una funzione
+            // che toglie listener, timer, stili ecc. Viene eseguita una sola volta.
+            exitHandlers: [],
+            onExit: function(fn) {
+                if (typeof fn === 'function') this.exitHandlers.push(fn);
+            },
+            runExit: function() {
+                var list = this.exitHandlers;
+                this.exitHandlers = [];
+                for (var i = 0; i < list.length; i++) {
+                    try { list[i](); } catch (e) { console.error('Errore in onExit:', e); }
+                }
+            },
+
+            returnToMenu: function() {
+                this.runExit();
+                if (typeof loadMenu === 'function') {
+                    loadMenu();
+                }
+            },
+
+            // Registro interno per l'Auto-Discovery delle cartucce
+            cartridges: [],
+            registerCartridge: function(cartData) {
+                // Se la stessa cartuccia viene registrata due volte, la seconda è ignorata
+                for (var i = 0; i < this.cartridges.length; i++) {
+                    if (this.cartridges[i].id === cartData.id) return;
+                }
+                this.cartridges.push(cartData);
+            }
+        };
+    </script>
+
+    <!-- IL GUSCIO CARICA SOLO IL LAUNCHER INTELLIGENTE -->
+    <script src="launcher.js"
+        onerror="document.getElementById('cartridge-slot').innerHTML='<div style=&quot;color:#fca5a5;padding:20px;text-align:center;font-size:1.2rem;&quot;>Impossibile caricare launcher.js.<br>Controlla che il file sia nella stessa cartella di index.html.</div>'"></script>
+</body>
+</html>
