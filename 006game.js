@@ -54,9 +54,10 @@ window.UGOConsole.registerCartridge({
                 <div id="sd-menu" class="sd-overlay">
                     <h2>Solidamente!</h2>
                     <p>Scegli il tuo livello:</p>
-                    <button type="button" class="sd-lv sd-lv0" data-lv="0"><b>Apprendista</b><span>Conta i cubetti: solidi piccoli, tutto a vista.</span></button>
-                    <button type="button" class="sd-lv sd-lv1" data-lv="1"><b>Costruttore</b><span>Solidi più grandi con parti nascoste: gira il solido! I mattoncini grandi valgono più cubetti.</span></button>
-                    <button type="button" class="sd-lv sd-lv2" data-lv="2"><b>Architetto</b><span>Calcola il volume pezzo per pezzo.</span></button>
+                    <button type="button" class="sd-lv sd-lv0" data-lv="0"><b>Apprendista</b><span>Conta i cubetti: solidi piccoli, che puoi anche girare per guardarli da ogni lato.</span></button>
+                    <button type="button" class="sd-lv sd-lv1" data-lv="1"><b>Costruttore</b><span>Calcola il volume pezzo per pezzo.</span></button>
+                    <button type="button" class="sd-lv sd-lv2" data-lv="2"><b>Architetto</b><span>Solidi con parti nascoste: gira il solido! I mattoncini grandi valgono più cubetti.</span></button>
+                    <p>In tutti i livelli i solidi sono pieni: dentro non ci sono vuoti e nessun cubetto è sospeso.</p>
                 </div>
 
                 <div id="sd-end" class="sd-overlay" style="display:none;">
@@ -79,24 +80,31 @@ window.UGOConsole.registerCartridge({
         styleCart.innerHTML = `
             #sd-root { position: relative; width: 100%; height: 100%; background: #0f172a; color: #f8fafc;
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-            #sd-container { width: 100%; height: 100%; display: flex; flex-direction: column; gap: 6px;
-                padding: 8px; box-sizing: border-box; overflow: hidden; }
+            #sd-container { width: 100%; height: 100%; display: flex; flex-direction: column; gap: 4px; box-sizing: border-box; overflow: hidden;
+                /* l'ultimo valore è la "barra invisibile" in basso: tiene la tastiera lontana dal bordo */
+                padding: 6px 8px 14px 8px; padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
 
+            /* La barra con livello, solido e punti serve solo in tutto schermo: altrimenti c'è già quella della console */
             .sd-hud { flex: 0 0 auto; width: 100%; max-width: 900px; margin: 0 auto; box-sizing: border-box;
                 display: flex; justify-content: space-between; gap: 8px; background: #1e293b; border: 1px solid #334155;
-                border-radius: 8px; padding: 6px 12px; font-weight: bold; font-size: 0.95rem; font-size: clamp(0.8rem, 2.8vh, 1.1rem); }
+                border-radius: 8px; padding: 5px 12px; font-weight: bold; font-size: 0.95rem; font-size: clamp(0.8rem, 2.8vh, 1.1rem); }
+            body:not(.is-fullscreen) .sd-hud { display: none; }
             .sd-v { color: #38bdf8; }
             .sd-g { color: #22c55e; }
 
             #sd-q { flex: 0 0 auto; width: 100%; max-width: 900px; margin: 0 auto; text-align: center; box-sizing: border-box;
-                font-weight: bold; line-height: 1.3; min-height: 2.6em; display: flex; flex-direction: column; justify-content: center;
+                font-weight: bold; line-height: 1.25; min-height: 2.2em; display: flex; flex-direction: column; justify-content: center;
                 font-size: 0.95rem; font-size: clamp(0.85rem, 2.9vh, 1.25rem); }
+            #sd-q.q0 { min-height: 2.2em; }
+            #sd-q.q1 { min-height: 3.5em; }
+            #sd-q.q2 { min-height: 3.1em; }
             .sd-la { color: #38bdf8; }
             .sd-lb { color: #f59e0b; }
+            .sd-leg { font-size: 0.9em; }
 
             #sd-main { flex: 1 1 0; min-height: 0; width: 100%; max-width: 900px; margin: 0 auto;
-                display: flex; flex-direction: column; gap: 6px; }
-            #sd-draw { flex: 1.15 1 0; min-height: 0; position: relative; background: #1e293b; border: 2px solid #334155;
+                display: flex; flex-direction: column; gap: 4px; }
+            #sd-draw { flex: 1 1 0; min-height: 0; position: relative; background: #1e293b; border: 2px solid #334155;
                 border-radius: 12px; overflow: hidden; }
             #sd-svg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
             #sd-svg svg { width: 100%; height: 100%; display: block; }
@@ -107,22 +115,26 @@ window.UGOConsole.registerCartridge({
                 touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
             #sd-rot button:active { background: rgba(13, 148, 136, 1); }
 
-            #sd-side { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; gap: 6px; }
-            #sd-hint { flex: 0 0 auto; min-height: 2.4em; text-align: center; color: #fbbf24; font-weight: bold; line-height: 1.2;
+            /* Parte bassa (aiuto, risposta, tastierino): più alta di prima, ma lo spazio lo si è recuperato
+               dalla barra info e dalle righe di testo, non dal disegno */
+            #sd-side { flex: 0 0 48%; min-height: 0; display: flex; flex-direction: column; gap: 4px; align-items: center; }
+            #sd-hint { flex: 0 0 auto; width: 100%; min-height: 2.3em; text-align: center; color: #fbbf24; font-weight: bold; line-height: 1.15;
                 display: flex; align-items: center; justify-content: center;
-                font-size: 0.85rem; font-size: clamp(0.78rem, 2.5vh, 1.05rem); }
+                font-size: 0.78rem; font-size: clamp(0.7rem, 2.1vh, 0.95rem); }
             #sd-hint.ok { color: #4ade80; }
             #sd-hint.ko { color: #f87171; }
-            #sd-ans { flex: 0 0 auto; height: 44px; height: clamp(38px, 7vh, 56px); background: rgba(0,0,0,0.6);
-                border: 2px solid rgba(255,255,255,0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center;
-                font-size: 1.7rem; font-size: clamp(1.3rem, 5vh, 2rem); font-weight: 800; letter-spacing: 2px; color: #00ffcc; }
+            #sd-ans { flex: 0 0 auto; width: 100%; max-width: 420px; height: 38px; height: clamp(34px, 6vh, 52px);
+                background: rgba(0,0,0,0.6); border: 2px solid rgba(255,255,255,0.2); border-radius: 10px; box-sizing: border-box;
+                display: flex; align-items: center; justify-content: center; line-height: 1;
+                font-size: 1.5rem; font-size: clamp(1.2rem, 4.4vh, 1.8rem); font-weight: 800; letter-spacing: 2px; color: #00ffcc; }
             #sd-ans.ok { border-color: #22c55e; }
             #sd-ans.ko { border-color: #ef4444; }
-            #sd-pad { flex: 1 1 0; min-height: 0; display: grid; grid-template-columns: repeat(3, 1fr);
-                grid-template-rows: repeat(4, minmax(0, 1fr)); gap: 6px; }
-            .sd-key { width: 100%; height: 100%; padding: 0; background: #334155; color: #fff; border: none; border-radius: 10px;
-                font-weight: bold; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
-                font-size: 1.3rem; font-size: clamp(1.05rem, 4.4vh, 1.7rem); }
+            /* La dimensione dei numeri sui tasti viene regolata dal codice (adattaTasti) in base all'altezza reale dei tasti */
+            #sd-pad { flex: 1 1 0; min-height: 0; width: 100%; max-width: 420px; display: grid; grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(4, minmax(0, 1fr)); gap: 6px; font-size: 1.2rem; font-size: clamp(1rem, 3.4vh, 1.5rem); }
+            .sd-key { width: 100%; height: 100%; padding: 0; margin: 0; background: #334155; color: #fff; border: none; border-radius: 10px;
+                font: inherit; font-weight: bold; line-height: 1; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+                display: flex; align-items: center; justify-content: center; overflow: hidden; }
             .sd-key:active { background: #475569; }
             .sd-del { background: #64748b; }
             .sd-ok { background: #22c55e; }
@@ -159,10 +171,12 @@ window.UGOConsole.registerCartridge({
             .sd-overlay .btn-start { background: #14b8a6; box-shadow: 0 4px #0f766e; }
             .sd-overlay .btn-start.sd-alt { background: #64748b; box-shadow: 0 4px #475569; }
 
-            /* Telefono in orizzontale: disegno a sinistra, tastierino a destra */
-            @media (orientation: landscape) and (max-height: 520px) {
-                #sd-main { flex-direction: row; }
-                #sd-draw { flex: 1.2 1 0; }
+            .sd-sub { font-weight: normal; color: #94a3b8; font-size: 0.76em; line-height: 1.25; }
+
+            /* Schermo più largo che alto (telefono in orizzontale, PC, lavagna): disegno a sinistra, tastierino a destra */
+            @media (orientation: landscape) {
+                #sd-main { flex-direction: row; gap: 8px; }
+                #sd-draw { flex: 1.25 1 0; }
                 #sd-side { flex: 1 1 0; }
             }
         `;
@@ -342,8 +356,18 @@ window.UGOConsole.registerCartridge({
         const COL_PEZZO_A = "#38bdf8", COL_PEZZO_B = "#f59e0b";
 
         // APPRENDISTA: gradinate (altezze che non crescono verso chi guarda), tutto a vista
-        function genA(diff) {
-            const cfg = [{ mw: 2, md: 2, mh: 2, cap: 10 }, { mw: 3, md: 2, mh: 3, cap: 16 }, { mw: 3, md: 3, mh: 3, cap: 22 }][diff];
+        function genA(diff, consentiPieno) {
+            const cfg = [{ mw: 3, md: 2, mh: 2, cap: 12 }, { mw: 3, md: 2, mh: 3, cap: 16 }, { mw: 3, md: 3, mh: 3, cap: 22 }][diff];
+            // Ogni tanto (livello alto) un blocco pieno, compreso il cubo 3 × 3 × 3
+            if (consentiPieno && Math.random() < 0.25) {
+                const blocchi = [[3, 3, 3], [3, 3, 3], [3, 3, 2], [2, 3, 3], [3, 2, 3], [2, 2, 3]];
+                const bl = blocchi[rnd(0, blocchi.length - 1)];
+                const bx = [];
+                for (let x = 0; x < bl[0]; x++) for (let y = 0; y < bl[1]; y++) for (let z = 0; z < bl[2]; z++) {
+                    bx.push({ x: x, y: y, z: z, dx: 1, dy: 1, dz: 1, c: COL_STRATO[z % COL_STRATO.length] });
+                }
+                return { tipo: 'conta', W: bl[0], D: bl[1], boxes: bx, total: bl[0] * bl[1] * bl[2], H: bl[2], pieno: true };
+            }
             for (let t = 0; t < 1000; t++) {
                 const W = rnd(1, cfg.mw), D = rnd(1, cfg.md);
                 if (W * D < 2) continue;
@@ -550,6 +574,43 @@ window.UGOConsole.registerCartridge({
         let hintTimeout = null;
         let promptCorrente = "";
         let schedTimeouts = [];
+        let usati = {};          // solidi già usciti in questa partita (le versioni ruotate contano come uguali)
+        let pienoUsato = false;  // il blocco pieno (cubo) esce al massimo una volta per partita
+        let unicoRipiego = 0;    // (solo per i controlli)
+
+        function chiave(sol, conColore) {
+            let best = null;
+            for (let r = 0; r < 4; r++) {
+                const q = ruotata(sol, r);
+                const v = [];
+                let mx = 1e9, my = 1e9, mz = 1e9;
+                q.boxes.forEach(function(b) {
+                    if (b.x < mx) mx = b.x; if (b.y < my) my = b.y; if (b.z < mz) mz = b.z;
+                });
+                q.boxes.forEach(function(b) {
+                    for (let x = b.x; x < b.x + b.dx; x++) for (let y = b.y; y < b.y + b.dy; y++) for (let z = b.z; z < b.z + b.dz; z++) {
+                        v.push((x - mx) + ',' + (y - my) + ',' + (z - mz) + (conColore ? ':' + b.c : ''));
+                    }
+                });
+                v.sort();
+                const k = v.join('|');
+                if (best === null || k < best) best = k;
+            }
+            return best;
+        }
+
+        // Genera un solido che non sia già uscito in questa partita
+        function unico(fn, conColore) {
+            let sol = null;
+            for (let i = 0; i < 300; i++) {
+                sol = fn();
+                const k = chiave(sol, conColore);
+                if (!usati[k]) { usati[k] = true; return sol; }
+            }
+            unicoRipiego++;
+            usati[chiave(sol, conColore)] = true;
+            return sol;
+        }
 
         function schedule(fn, ms) {
             const id = setTimeout(function() { if (alive) fn(); }, ms);
@@ -558,7 +619,7 @@ window.UGOConsole.registerCartridge({
 
         function aggiornaConsole() {
             if (window.UGOConsole) {
-                window.UGOConsole.setTitle("Solidamente!");
+                window.UGOConsole.setTitle(giocoAttivo ? "Solidamente! · " + NOMI_LIVELLO[livello] : "Solidamente!");
                 window.UGOConsole.setScore(punti);
                 if (window.UGOConsole.setTimerLabel) window.UGOConsole.setTimerLabel("Solido");
                 window.UGOConsole.setTimer(nSolido + "/" + NUM_SOLIDI);
@@ -588,6 +649,18 @@ window.UGOConsole.registerCartridge({
             schedule(function() { a.classList.remove("ok", "ko"); }, 350);
         }
 
+        // I numeri sui tasti si adattano all'altezza reale dei tasti: non escono mai dal tasto
+        function adattaTasti() {
+            const pad = document.getElementById("sd-pad");
+            if (!pad) return;
+            const r = pad.getBoundingClientRect();
+            if (!r.height || !r.width) return;
+            const keyH = (r.height - 18) / 4;
+            const keyW = (r.width - 12) / 3;
+            const f = Math.max(11, Math.min(30, keyH * 0.5, keyW * 0.45));
+            pad.style.fontSize = f.toFixed(1) + "px";
+        }
+
         function disegna() {
             document.getElementById("sd-svg").innerHTML = renderSvg(S, rot);
         }
@@ -603,13 +676,17 @@ window.UGOConsole.registerCartridge({
             giocoAttivo = true;
             busy = false;
             errori = [];
+            usati = {};
+            pienoUsato = false;
             pianoB = shuffle(['conta', 'conta', 'conta', 'conta', 'conta', 'mancano', 'mancano', 'mancano']);
             document.getElementById("sd-menu").style.display = "none";
             document.getElementById("sd-end").style.display = "none";
             document.getElementById("sd-liv").textContent = NOMI_LIVELLO[lv];
             document.getElementById("sd-pt").textContent = 0;
-            document.getElementById("sd-rot").classList.toggle("on", lv >= 1);
+            document.getElementById("sd-rot").classList.toggle("on", true); // rotazione in tutti i livelli
             prossimoSolido();
+            schedule(adattaTasti, 80);
+            schedule(adattaTasti, 500);
         }
 
         function prossimoSolido() {
@@ -623,44 +700,55 @@ window.UGOConsole.registerCartridge({
             sbagliatoInSolido = false;
             risposteDate = [];
 
+            const SUB = "<span class='sd-sub'>";
+            const PIENO = "Solido pieno: niente vuoti, niente cubetti sospesi.";
             let domanda = "";
             if (livello === 0) {
-                S = genA(diff);
+                // APPRENDISTA
+                S = unico(function() { return genA(diff, diff >= 2 && !pienoUsato); }, false);
+                if (S.pieno) pienoUsato = true;
                 S.steps = [{ target: S.total, testo: "" }];
-                domanda = "Quanti cubetti ci sono in tutto?";
+                domanda = "Quanti cubetti ci sono in tutto?<br>" + SUB + PIENO + "</span>";
             } else if (livello === 1) {
-                S = genB(diff, pianoB[nSolido - 1]);
-                if (S.tipo === 'mancano') {
-                    S.steps = [{ target: S.manca, testo: "" }];
-                    domanda = "Quanti cubetti mancano per completare un blocco " + S.W + " × " + S.D + " × " + S.H + "?";
-                } else {
-                    S.steps = [{ target: S.total, testo: "" }];
-                    domanda = "Quanti cubetti ci sono in tutto?<br><span style='font-weight:normal;color:#94a3b8;'>Gira il solido per vedere dietro. I mattoncini grandi valgono più cubetti.</span>";
-                }
-            } else {
-                S = genC(diff);
+                // COSTRUTTORE: due pezzi, volume a passi
+                S = unico(function() { return genC(diff); }, true);
                 const A = S.boxes[0], B = S.boxes[1];
                 S.steps = [
                     { target: S.VA, testo: "Volume del pezzo azzurro?" },
                     { target: S.VB, testo: "Volume del pezzo arancio?" },
                     { target: S.total, testo: "Volume totale del solido?" }
                 ];
-                domanda = "Calcola il volume.<br><span class='sd-la'>Pezzo azzurro: " + A.dx + " × " + A.dy + " × " + A.dz + "</span> · " +
-                          "<span class='sd-lb'>Pezzo arancio: " + B.dx + " × " + B.dy + " × " + B.dz + "</span>";
+                domanda = "Calcola il volume.<br><span class='sd-la sd-leg'>Pezzo azzurro: " + A.dx + " × " + A.dy + " × " + A.dz + "</span><br>" +
+                          "<span class='sd-lb sd-leg'>Pezzo arancio: " + B.dx + " × " + B.dy + " × " + B.dz + "</span>";
+            } else {
+                // ARCHITETTO: parti nascoste, mattoncini, rotazione
+                const tipo = pianoB[nSolido - 1];
+                S = unico(function() { return genB(diff, tipo); }, false);
+                if (S.tipo === 'mancano') {
+                    S.steps = [{ target: S.manca, testo: "" }];
+                    domanda = "Quanti cubetti mancano per completare un blocco " + S.W + " × " + S.D + " × " + S.H + "?<br>" +
+                              SUB + "Dentro il solido non ci sono vuoti nascosti.</span>";
+                } else {
+                    S.steps = [{ target: S.total, testo: "" }];
+                    domanda = "Quanti cubetti ci sono in tutto?<br>" + SUB + "Gira il solido per vedere dietro. I mattoncini grandi valgono più cubetti. " + PIENO + "</span>";
+                }
             }
 
-            document.getElementById("sd-q").innerHTML = domanda;
+            const qEl = document.getElementById("sd-q");
+            qEl.className = "q" + livello;
+            qEl.innerHTML = domanda;
             S.domandaPiana = domanda.replace(/<br>.*$/, "").replace(/<[^>]+>/g, "");
             document.getElementById("sd-n").textContent = nSolido + "/" + NUM_SOLIDI;
             promptCorrente = S.steps[0].testo;
             setHint(promptCorrente, "", 0);
             mostraInput();
             disegna();
+            adattaTasti();
             aggiornaConsole();
         }
 
         function ruotaVista(dir) {
-            if (!giocoAttivo || livello < 1 || !S) return;
+            if (!giocoAttivo || !S) return;
             rot = (rot + dir + 4) % 4;
             suonaRuota();
             disegna();
@@ -684,7 +772,7 @@ window.UGOConsole.registerCartridge({
             if (v === st.target) {
                 suonaGiusto();
                 lampeggia(true);
-                if (livello === 2 && stepIdx < S.steps.length - 1) {
+                if (livello === 1 && stepIdx < S.steps.length - 1) {
                     setHint("Esatto! " + st.target, "ok", 1100);
                     stepIdx++;
                     input = "";
@@ -713,7 +801,7 @@ window.UGOConsole.registerCartridge({
                 setHint("Era " + st.target, "ko", 0);
                 input = "";
                 mostraInput();
-                if (livello === 2 && stepIdx < S.steps.length - 1) {
+                if (livello === 1 && stepIdx < S.steps.length - 1) {
                     schedule(function() {
                         busy = false;
                         stepIdx++;
@@ -824,6 +912,9 @@ window.UGOConsole.registerCartridge({
             document.getElementById("sd-menu").style.display = "flex";
         });
 
+        window.addEventListener('resize', adattaTasti);
+        window.addEventListener('orientationchange', adattaTasti);
+
         if (window.__sdKeyHandler) window.removeEventListener('keydown', window.__sdKeyHandler);
         window.__sdKeyHandler = function(e) {
             if (!alive || !giocoAttivo || !document.getElementById('sd-container')) return;
@@ -843,6 +934,8 @@ window.UGOConsole.registerCartridge({
                 if (hintTimeout) clearTimeout(hintTimeout);
                 schedTimeouts.forEach(function(id) { clearTimeout(id); });
                 window.removeEventListener('keydown', window.__sdKeyHandler);
+                window.removeEventListener('resize', adattaTasti);
+                window.removeEventListener('orientationchange', adattaTasti);
                 try { if (audioCtx && audioCtx.close) audioCtx.close(); } catch (e) {}
                 audioCtx = null;
                 const st = document.getElementById('style-cartuccia-6');

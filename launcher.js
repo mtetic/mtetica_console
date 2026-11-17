@@ -2,7 +2,7 @@
 
 // Cambia questo numero ogni volta che aggiorni un gioco: obbliga i dispositivi
 // (iPhone, lavagne) a scaricare la versione nuova invece di mostrare quella vecchia.
-var VERSIONE = "1";
+var VERSIONE = "2";
 
 // La scansione si ferma dopo questo numero di file mancanti consecutivi.
 // Così puoi togliere un gioco (es. 002game.js) senza perdere quelli successivi.
