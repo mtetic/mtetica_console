@@ -23,26 +23,32 @@ window.UGOConsole.registerCartridge({
                     <div id="op-main">
                         <div id="op-exp"><span id="op-expin"></span></div>
 
+                        <!-- Tastierino a righe flex (compatibile con i browser vecchi) -->
                         <div id="op-keys">
-                            <button type="button" class="op-btn" data-k="7">7</button>
-                            <button type="button" class="op-btn" data-k="8">8</button>
-                            <button type="button" class="op-btn" data-k="9">9</button>
-                            <button type="button" class="op-btn op-op" data-k="+">+</button>
-
-                            <button type="button" class="op-btn" data-k="4">4</button>
-                            <button type="button" class="op-btn" data-k="5">5</button>
-                            <button type="button" class="op-btn" data-k="6">6</button>
-                            <button type="button" class="op-btn op-op" data-k="-">−</button>
-
-                            <button type="button" class="op-btn" data-k="1">1</button>
-                            <button type="button" class="op-btn" data-k="2">2</button>
-                            <button type="button" class="op-btn" data-k="3">3</button>
-                            <button type="button" class="op-btn op-op" data-k="×">×</button>
-
-                            <button type="button" class="op-btn op-del" data-k="C">C</button>
-                            <button type="button" class="op-btn" data-k="0">0</button>
-                            <button type="button" class="op-btn op-act" data-k="OK">↵</button>
-                            <button type="button" class="op-btn op-op" data-k=":">:</button>
+                            <div class="op-row">
+                                <button type="button" class="op-btn" data-k="7">7</button>
+                                <button type="button" class="op-btn" data-k="8">8</button>
+                                <button type="button" class="op-btn" data-k="9">9</button>
+                                <button type="button" class="op-btn op-op" data-k="+">+</button>
+                            </div>
+                            <div class="op-row">
+                                <button type="button" class="op-btn" data-k="4">4</button>
+                                <button type="button" class="op-btn" data-k="5">5</button>
+                                <button type="button" class="op-btn" data-k="6">6</button>
+                                <button type="button" class="op-btn op-op" data-k="-">−</button>
+                            </div>
+                            <div class="op-row">
+                                <button type="button" class="op-btn" data-k="1">1</button>
+                                <button type="button" class="op-btn" data-k="2">2</button>
+                                <button type="button" class="op-btn" data-k="3">3</button>
+                                <button type="button" class="op-btn op-op" data-k="×">×</button>
+                            </div>
+                            <div class="op-row">
+                                <button type="button" class="op-btn op-del" data-k="C">C</button>
+                                <button type="button" class="op-btn" data-k="0">0</button>
+                                <button type="button" class="op-btn op-act" data-k="OK">↵</button>
+                                <button type="button" class="op-btn op-op" data-k=":">:</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -75,35 +81,84 @@ window.UGOConsole.registerCartridge({
         const styleCart = document.createElement('style');
         styleCart.id = 'style-cartuccia-7';
         styleCart.innerHTML = `
-            #op-root { position: relative; width: 100%; height: 100%; background: #000; color: #fff; font-family: Arial, sans-serif; }
-            #op-container { width: 100%; height: 100%; display: flex; flex-direction: column; gap: 6px; box-sizing: border-box; overflow: hidden;
+            /* Radice e contenitore ancorati ai 4 lati dello slot: altezza SEMPRE definita,
+               anche sui browser vecchi delle lavagne */
+            #op-root {
+                position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+                background: #000; color: #fff; font-family: Arial, sans-serif;
+            }
+            #op-container {
+                position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
+                box-sizing: border-box; overflow: hidden;
                 /* l'ultimo valore in basso è la "barra invisibile" che tiene la tastiera lontana dal bordo */
-                padding: 6px 8px 14px 8px; padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
+                padding: 6px 8px 14px 8px; padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+            }
 
             /* Tempo e punti qui dentro servono solo in tutto schermo: altrimenti li mostra già la console */
-            .op-hud { flex: 0 0 auto; width: 100%; max-width: 900px; margin: 0 auto; box-sizing: border-box;
-                display: flex; justify-content: space-between; gap: 8px; background: #1e1e1e; border: 1px solid #2a2a2a;
-                border-radius: 10px; padding: 6px 14px; font-weight: bold; font-size: 1.05rem; font-size: clamp(0.85rem, 3vh, 1.2rem); }
+            .op-hud {
+                -webkit-flex: 0 0 auto; flex: 0 0 auto;
+                width: 100%; max-width: 900px; margin: 0 auto 6px auto; box-sizing: border-box;
+                display: -webkit-flex; display: flex;
+                -webkit-justify-content: space-between; justify-content: space-between;
+                background: #1e1e1e; border: 1px solid #2a2a2a;
+                border-radius: 10px; padding: 6px 14px; font-weight: bold;
+                font-size: 2.8vh;
+                font-size: clamp(0.85rem, 3vh, 1.2rem);
+            }
             body:not(.is-fullscreen) .op-hud { display: none; }
             .op-v { color: #38bdf8; }
             .op-t { color: #f87171; }
             .op-s { color: #4ade80; }
 
-            #op-main { flex: 1 1 0; min-height: 0; width: 100%; max-width: 900px; margin: 0 auto;
-                display: flex; flex-direction: column; gap: 6px; }
-            #op-exp { flex: 1 1 0; min-height: 0; background: #18181b; border: 2px solid #3f3f46; border-radius: 12px;
-                display: flex; align-items: center; justify-content: center; font-weight: bold; letter-spacing: 2px;
+            #op-main {
+                -webkit-flex: 1 1 0px; flex: 1 1 0px;
+                min-height: 0; width: 100%; max-width: 900px; margin: 0 auto;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
+            }
+            #op-exp {
+                -webkit-flex: 1 1 0px; flex: 1 1 0px;
+                min-height: 0; margin-bottom: 6px;
+                background: #18181b; border: 2px solid #3f3f46; border-radius: 12px;
+                display: -webkit-flex; display: flex;
+                -webkit-align-items: center; align-items: center;
+                -webkit-justify-content: center; justify-content: center;
+                font-weight: bold; letter-spacing: 2px;
                 white-space: nowrap; overflow: hidden; padding: 0 8px; box-sizing: border-box;
-                font-size: 2rem; font-size: clamp(1.6rem, 6.5vh, 2.8rem); }
+                font-size: 6vh;
+                font-size: clamp(1.6rem, 6.5vh, 2.8rem);
+            }
             .op-hole { display: inline-block; min-width: 1.3em; border-bottom: 0.12em solid #38bdf8; color: #38bdf8; text-align: center; line-height: 1.1; }
 
             /* La dimensione dei numeri sui tasti viene regolata dal codice (adattaTasti) in base all'altezza dei tasti */
-            #op-keys { flex: 1.6 1 0; min-height: 0; width: 100%; max-width: 520px; margin: 0 auto;
-                display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, minmax(0, 1fr)); gap: 8px;
-                font-size: 1.4rem; font-size: clamp(1.1rem, 4vh, 1.7rem); }
-            .op-btn { width: 100%; height: 100%; padding: 0; margin: 0; background: #27272a; color: #fff; border: none; border-radius: 10px;
+            #op-keys {
+                -webkit-flex: 1.6 1 0px; flex: 1.6 1 0px;
+                min-height: 0; width: 100%; max-width: 520px; margin: 0 auto;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
+                font-size: 3.8vh;
+                font-size: clamp(1.1rem, 4vh, 1.7rem);
+            }
+            .op-row {
+                -webkit-flex: 1 1 0px; flex: 1 1 0px;
+                min-height: 0; margin-bottom: 8px;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: row; flex-direction: row;
+            }
+            .op-row:last-child { margin-bottom: 0; }
+            .op-btn {
+                -webkit-flex: 1 1 0px; flex: 1 1 0px;
+                min-width: 0; padding: 0; margin: 0 8px 0 0;
+                background: #27272a; color: #fff; border: none; border-radius: 10px;
                 font: inherit; font-weight: bold; line-height: 1; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
-                display: flex; align-items: center; justify-content: center; overflow: hidden; transition: background 0.1s; }
+                display: -webkit-flex; display: flex;
+                -webkit-align-items: center; align-items: center;
+                -webkit-justify-content: center; justify-content: center;
+                overflow: hidden; transition: background 0.1s;
+            }
+            .op-btn:last-child { margin-right: 0; }
             .op-btn:active { background: #52525b; }
             .op-op { background: #1e3a8a; color: #93c5fd; }
             .op-op:active { background: #1d4ed8; }
@@ -112,35 +167,66 @@ window.UGOConsole.registerCartridge({
             .op-del { background: #7f1d1d; color: #fecaca; }
             .op-del:active { background: #991b1b; }
 
-            .op-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.96);
-                display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
-                padding: 14px; box-sizing: border-box; text-align: center; z-index: 10; overflow-y: auto; }
-            .op-overlay h2 { margin: 0; color: #38bdf8; font-size: 2rem; font-size: clamp(1.6rem, 6vh, 2.4rem); letter-spacing: 1px; }
-            .op-overlay p { margin: 0; color: #a1a1aa; max-width: 460px; line-height: 1.5; font-size: 1.1rem; font-size: clamp(0.95rem, 2.8vh, 1.2rem); }
-            .op-lv { width: 100%; max-width: 420px; border: none; border-radius: 12px; padding: 12px 16px; color: #fff; cursor: pointer;
-                display: flex; flex-direction: column; gap: 2px; box-shadow: 0 4px rgba(0,0,0,0.5); touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+            .op-overlay {
+                position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.96);
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
+                -webkit-align-items: center; align-items: center;
+                -webkit-justify-content: center; justify-content: center;
+                padding: 14px; box-sizing: border-box; text-align: center; z-index: 10; overflow-y: auto;
+            }
+            /* niente "gap": si usano i margini */
+            .op-overlay h2 {
+                margin: 5px 0; color: #38bdf8; letter-spacing: 1px;
+                font-size: 5.5vh;
+                font-size: clamp(1.6rem, 6vh, 2.4rem);
+            }
+            .op-overlay p {
+                margin: 5px 0; color: #a1a1aa; max-width: 460px; line-height: 1.5;
+                font-size: 2.6vh;
+                font-size: clamp(0.95rem, 2.8vh, 1.2rem);
+            }
+            .op-lv {
+                width: 100%; max-width: 420px; margin: 5px 0; border: none; border-radius: 12px; padding: 12px 16px; color: #fff; cursor: pointer;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
+                box-shadow: 0 4px rgba(0,0,0,0.5); touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+            }
             .op-lv b { font-size: 1.3rem; }
-            .op-lv span { font-size: 0.88rem; opacity: 0.92; }
+            .op-lv span { margin-top: 2px; font-size: 0.88rem; opacity: 0.92; }
             .op-lv:active { transform: translateY(3px); box-shadow: none; }
             .op-lv0 { background: #15803d; }
             .op-lv1 { background: #1d4ed8; }
-            #op-endmsg { color: #fde68a; font-weight: bold; max-width: 460px; }
-            .op-errors { width: 100%; max-width: 520px; max-height: 38vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
-                background: #18181b; border: 1px solid #3f3f46; border-radius: 8px; padding: 6px 12px; box-sizing: border-box; text-align: left; }
-            .op-err { font-size: 1rem; padding: 5px 0; border-bottom: 1px solid #27272a; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+            #op-endmsg { color: #fde68a; font-weight: bold; max-width: 460px; margin: 5px 0; }
+            .op-errors {
+                width: 100%; max-width: 520px; max-height: 38vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
+                background: #18181b; border: 1px solid #3f3f46; border-radius: 8px; padding: 6px 12px; box-sizing: border-box; text-align: left;
+            }
+            .op-err {
+                font-size: 1rem; padding: 5px 0; border-bottom: 1px solid #27272a;
+                display: -webkit-flex; display: flex;
+                -webkit-justify-content: space-between; justify-content: space-between;
+                -webkit-align-items: center; align-items: center;
+            }
+            .op-err > span:first-child { margin-right: 10px; }
             .op-err:last-child { border-bottom: none; }
             .op-wrong { color: #f87171; font-weight: bold; margin-right: 8px; }
             .op-lab { color: #a1a1aa; font-size: 0.85rem; margin-right: 4px; }
             .op-right { color: #4ade80; font-weight: bold; }
-            .op-endbtns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+            .op-endbtns {
+                display: -webkit-flex; display: flex;
+                -webkit-flex-wrap: wrap; flex-wrap: wrap;
+                -webkit-justify-content: center; justify-content: center;
+            }
+            .op-endbtns .btn-start { margin: 5px; }
             .op-overlay .btn-start { background: #0284c7; box-shadow: 0 4px #075985; }
             .op-overlay .btn-start.op-alt { background: #52525b; box-shadow: 0 4px #3f3f46; }
 
             /* Schermo più largo che alto (telefono in orizzontale, PC, lavagna): operazione a sinistra, tastierino a destra */
             @media (orientation: landscape) {
-                #op-main { flex-direction: row; gap: 8px; }
-                #op-exp { flex: 1 1 0; }
-                #op-keys { flex: 1 1 0; max-width: none; margin: 0; }
+                #op-main { -webkit-flex-direction: row; flex-direction: row; }
+                #op-exp { -webkit-flex: 1 1 0px; flex: 1 1 0px; margin-bottom: 0; margin-right: 8px; }
+                #op-keys { -webkit-flex: 1 1 0px; flex: 1 1 0px; max-width: none; margin: 0; }
             }
         `;
         document.head.appendChild(styleCart);
