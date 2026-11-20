@@ -33,19 +33,28 @@ window.UGOConsole.registerCartridge({
                         <div id="sd-side">
                             <div id="sd-hint"></div>
                             <div id="sd-ans">&nbsp;</div>
+                            <!-- Tastierino a righe flex (compatibile con i browser vecchi) -->
                             <div id="sd-pad">
-                                <button type="button" class="sd-key" data-k="1">1</button>
-                                <button type="button" class="sd-key" data-k="2">2</button>
-                                <button type="button" class="sd-key" data-k="3">3</button>
-                                <button type="button" class="sd-key" data-k="4">4</button>
-                                <button type="button" class="sd-key" data-k="5">5</button>
-                                <button type="button" class="sd-key" data-k="6">6</button>
-                                <button type="button" class="sd-key" data-k="7">7</button>
-                                <button type="button" class="sd-key" data-k="8">8</button>
-                                <button type="button" class="sd-key" data-k="9">9</button>
-                                <button type="button" class="sd-key sd-del" data-k="DEL">←</button>
-                                <button type="button" class="sd-key" data-k="0">0</button>
-                                <button type="button" class="sd-key sd-ok" data-k="OK">OK</button>
+                                <div class="sd-row">
+                                    <button type="button" class="sd-key" data-k="1">1</button>
+                                    <button type="button" class="sd-key" data-k="2">2</button>
+                                    <button type="button" class="sd-key" data-k="3">3</button>
+                                </div>
+                                <div class="sd-row">
+                                    <button type="button" class="sd-key" data-k="4">4</button>
+                                    <button type="button" class="sd-key" data-k="5">5</button>
+                                    <button type="button" class="sd-key" data-k="6">6</button>
+                                </div>
+                                <div class="sd-row">
+                                    <button type="button" class="sd-key" data-k="7">7</button>
+                                    <button type="button" class="sd-key" data-k="8">8</button>
+                                    <button type="button" class="sd-key" data-k="9">9</button>
+                                </div>
+                                <div class="sd-row">
+                                    <button type="button" class="sd-key sd-del" data-k="DEL">←</button>
+                                    <button type="button" class="sd-key" data-k="0">0</button>
+                                    <button type="button" class="sd-key sd-ok" data-k="OK">OK</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -78,23 +87,47 @@ window.UGOConsole.registerCartridge({
         const styleCart = document.createElement('style');
         styleCart.id = 'style-cartuccia-6';
         styleCart.innerHTML = `
-            #sd-root { position: relative; width: 100%; height: 100%; background: #0f172a; color: #f8fafc;
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-            #sd-container { width: 100%; height: 100%; display: flex; flex-direction: column; gap: 4px; box-sizing: border-box; overflow: hidden;
+            /* Radice e contenitore ancorati ai 4 lati dello slot: altezza SEMPRE definita,
+               anche sui browser vecchi delle lavagne */
+            #sd-root {
+                position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+                background: #0f172a; color: #f8fafc;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+            #sd-container {
+                position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
+                box-sizing: border-box; overflow: hidden;
                 /* l'ultimo valore è la "barra invisibile" in basso: tiene la tastiera lontana dal bordo */
-                padding: 6px 8px 14px 8px; padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
+                padding: 6px 8px 14px 8px; padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+            }
 
             /* La barra con livello, solido e punti serve solo in tutto schermo: altrimenti c'è già quella della console */
-            .sd-hud { flex: 0 0 auto; width: 100%; max-width: 900px; margin: 0 auto; box-sizing: border-box;
-                display: flex; justify-content: space-between; gap: 8px; background: #1e293b; border: 1px solid #334155;
-                border-radius: 8px; padding: 5px 12px; font-weight: bold; font-size: 0.95rem; font-size: clamp(0.8rem, 2.8vh, 1.1rem); }
+            .sd-hud {
+                -webkit-flex: 0 0 auto; flex: 0 0 auto;
+                width: 100%; max-width: 900px; margin: 0 auto 4px auto; box-sizing: border-box;
+                display: -webkit-flex; display: flex;
+                -webkit-justify-content: space-between; justify-content: space-between;
+                background: #1e293b; border: 1px solid #334155;
+                border-radius: 8px; padding: 5px 12px; font-weight: bold;
+                font-size: 2.6vh;
+                font-size: clamp(0.8rem, 2.8vh, 1.1rem);
+            }
             body:not(.is-fullscreen) .sd-hud { display: none; }
             .sd-v { color: #38bdf8; }
             .sd-g { color: #22c55e; }
 
-            #sd-q { flex: 0 0 auto; width: 100%; max-width: 900px; margin: 0 auto; text-align: center; box-sizing: border-box;
-                font-weight: bold; line-height: 1.25; min-height: 2.2em; display: flex; flex-direction: column; justify-content: center;
-                font-size: 0.95rem; font-size: clamp(0.85rem, 2.9vh, 1.25rem); }
+            #sd-q {
+                -webkit-flex: 0 0 auto; flex: 0 0 auto;
+                width: 100%; max-width: 900px; margin: 0 auto 4px auto; text-align: center; box-sizing: border-box;
+                font-weight: bold; line-height: 1.25; min-height: 2.2em;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
+                -webkit-justify-content: center; justify-content: center;
+                font-size: 2.7vh;
+                font-size: clamp(0.85rem, 2.9vh, 1.25rem);
+            }
             #sd-q.q0 { min-height: 2.2em; }
             #sd-q.q1 { min-height: 3.5em; }
             #sd-q.q2 { min-height: 3.1em; }
@@ -102,72 +135,160 @@ window.UGOConsole.registerCartridge({
             .sd-lb { color: #f59e0b; }
             .sd-leg { font-size: 0.9em; }
 
-            #sd-main { flex: 1 1 0; min-height: 0; width: 100%; max-width: 900px; margin: 0 auto;
-                display: flex; flex-direction: column; gap: 4px; }
-            #sd-draw { flex: 1 1 0; min-height: 0; position: relative; background: #1e293b; border: 2px solid #334155;
-                border-radius: 12px; overflow: hidden; }
+            #sd-main {
+                -webkit-flex: 1 1 0px; flex: 1 1 0px;
+                min-height: 0; width: 100%; max-width: 900px; margin: 0 auto;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
+            }
+            /* Disegno e parte bassa si dividono lo spazio a proporzione (52 / 48), senza percentuali */
+            #sd-draw {
+                -webkit-flex: 52 1 0px; flex: 52 1 0px;
+                min-height: 0; margin-bottom: 4px; position: relative;
+                background: #1e293b; border: 2px solid #334155;
+                border-radius: 12px; overflow: hidden;
+            }
             #sd-svg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
             #sd-svg svg { width: 100%; height: 100%; display: block; }
-            #sd-rot { display: none; position: absolute; left: 6px; right: 6px; bottom: 6px; justify-content: space-between; pointer-events: none; }
-            #sd-rot.on { display: flex; }
+            #sd-rot { display: none; position: absolute; left: 6px; right: 6px; bottom: 6px; -webkit-justify-content: space-between; justify-content: space-between; pointer-events: none; }
+            #sd-rot.on { display: -webkit-flex; display: flex; }
             #sd-rot button { pointer-events: auto; width: 52px; height: 52px; border-radius: 50%; border: none;
                 background: rgba(20, 184, 166, 0.85); color: #fff; font-size: 1.7rem; cursor: pointer;
                 touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
             #sd-rot button:active { background: rgba(13, 148, 136, 1); }
 
-            /* Parte bassa (aiuto, risposta, tastierino): più alta di prima, ma lo spazio lo si è recuperato
-               dalla barra info e dalle righe di testo, non dal disegno */
-            #sd-side { flex: 0 0 48%; min-height: 0; display: flex; flex-direction: column; gap: 4px; align-items: center; }
-            #sd-hint { flex: 0 0 auto; width: 100%; min-height: 2.3em; text-align: center; color: #fbbf24; font-weight: bold; line-height: 1.15;
-                display: flex; align-items: center; justify-content: center;
-                font-size: 0.78rem; font-size: clamp(0.7rem, 2.1vh, 0.95rem); }
+            /* Parte bassa (aiuto, risposta, tastierino) */
+            #sd-side {
+                -webkit-flex: 48 1 0px; flex: 48 1 0px;
+                min-height: 0;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
+                -webkit-align-items: center; align-items: center;
+            }
+            #sd-hint {
+                -webkit-flex: 0 0 auto; flex: 0 0 auto;
+                width: 100%; min-height: 2.3em; margin-bottom: 4px; text-align: center; color: #fbbf24; font-weight: bold; line-height: 1.15;
+                display: -webkit-flex; display: flex;
+                -webkit-align-items: center; align-items: center;
+                -webkit-justify-content: center; justify-content: center;
+                font-size: 2vh;
+                font-size: clamp(0.7rem, 2.1vh, 0.95rem);
+            }
             #sd-hint.ok { color: #4ade80; }
             #sd-hint.ko { color: #f87171; }
-            #sd-ans { flex: 0 0 auto; width: 100%; max-width: 420px; height: 38px; height: clamp(34px, 6vh, 52px);
+            #sd-ans {
+                -webkit-flex: 0 0 auto; flex: 0 0 auto;
+                width: 100%; max-width: 420px; margin-bottom: 4px;
+                height: 38px; height: clamp(34px, 6vh, 52px);
                 background: rgba(0,0,0,0.6); border: 2px solid rgba(255,255,255,0.2); border-radius: 10px; box-sizing: border-box;
-                display: flex; align-items: center; justify-content: center; line-height: 1;
-                font-size: 1.5rem; font-size: clamp(1.2rem, 4.4vh, 1.8rem); font-weight: 800; letter-spacing: 2px; color: #00ffcc; }
+                display: -webkit-flex; display: flex;
+                -webkit-align-items: center; align-items: center;
+                -webkit-justify-content: center; justify-content: center; line-height: 1;
+                font-weight: 800; letter-spacing: 2px; color: #00ffcc;
+                font-size: 4vh;
+                font-size: clamp(1.2rem, 4.4vh, 1.8rem);
+            }
             #sd-ans.ok { border-color: #22c55e; }
             #sd-ans.ko { border-color: #ef4444; }
             /* La dimensione dei numeri sui tasti viene regolata dal codice (adattaTasti) in base all'altezza reale dei tasti */
-            #sd-pad { flex: 1 1 0; min-height: 0; width: 100%; max-width: 420px; display: grid; grid-template-columns: repeat(3, 1fr);
-                grid-template-rows: repeat(4, minmax(0, 1fr)); gap: 6px; font-size: 1.2rem; font-size: clamp(1rem, 3.4vh, 1.5rem); }
-            .sd-key { width: 100%; height: 100%; padding: 0; margin: 0; background: #334155; color: #fff; border: none; border-radius: 10px;
+            #sd-pad {
+                -webkit-flex: 1 1 0px; flex: 1 1 0px;
+                min-height: 0; width: 100%; max-width: 420px;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
+                font-size: 3.2vh;
+                font-size: clamp(1rem, 3.4vh, 1.5rem);
+            }
+            .sd-row {
+                -webkit-flex: 1 1 0px; flex: 1 1 0px;
+                min-height: 0; margin-bottom: 6px;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: row; flex-direction: row;
+            }
+            .sd-row:last-child { margin-bottom: 0; }
+            .sd-key {
+                -webkit-flex: 1 1 0px; flex: 1 1 0px;
+                min-width: 0; padding: 0; margin: 0 6px 0 0;
+                background: #334155; color: #fff; border: none; border-radius: 10px;
                 font: inherit; font-weight: bold; line-height: 1; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
-                display: flex; align-items: center; justify-content: center; overflow: hidden; }
+                display: -webkit-flex; display: flex;
+                -webkit-align-items: center; align-items: center;
+                -webkit-justify-content: center; justify-content: center; overflow: hidden;
+            }
+            .sd-key:last-child { margin-right: 0; }
             .sd-key:active { background: #475569; }
             .sd-del { background: #64748b; }
             .sd-ok { background: #22c55e; }
             .sd-ok:active { background: #16a34a; }
 
-            .sd-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.97);
-                display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
-                padding: 14px; box-sizing: border-box; text-align: center; z-index: 10; overflow-y: auto; }
-            .sd-overlay h2 { margin: 0; color: #14b8a6; font-size: 1.9rem; font-size: clamp(1.5rem, 5.5vh, 2.3rem); }
-            .sd-overlay p { margin: 0; color: #94a3b8; font-size: 1.05rem; font-size: clamp(0.95rem, 2.8vh, 1.2rem); }
-            .sd-lv { width: 100%; max-width: 440px; border: none; border-radius: 12px; padding: 10px 14px; color: #fff; cursor: pointer;
-                display: flex; flex-direction: column; gap: 2px; text-align: center; box-shadow: 0 4px rgba(0,0,0,0.35);
-                touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
-            .sd-lv b { font-size: 1.25rem; font-size: clamp(1.05rem, 3.6vh, 1.45rem); }
-            .sd-lv span { font-size: 0.85rem; font-size: clamp(0.75rem, 2.3vh, 0.95rem); opacity: 0.92; font-weight: normal; }
+            .sd-overlay {
+                position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.97);
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
+                -webkit-align-items: center; align-items: center;
+                -webkit-justify-content: center; justify-content: center;
+                padding: 14px; box-sizing: border-box; text-align: center; z-index: 10; overflow-y: auto;
+            }
+            /* niente "gap": si usano i margini */
+            .sd-overlay h2 {
+                margin: 5px 0; color: #14b8a6;
+                font-size: 5vh;
+                font-size: clamp(1.5rem, 5.5vh, 2.3rem);
+            }
+            .sd-overlay p {
+                margin: 5px 0; color: #94a3b8;
+                font-size: 2.6vh;
+                font-size: clamp(0.95rem, 2.8vh, 1.2rem);
+            }
+            .sd-lv {
+                width: 100%; max-width: 440px; margin: 5px 0; border: none; border-radius: 12px; padding: 10px 14px; color: #fff; cursor: pointer;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
+                text-align: center; box-shadow: 0 4px rgba(0,0,0,0.35);
+                touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+            }
+            .sd-lv b {
+                font-size: 3.3vh;
+                font-size: clamp(1.05rem, 3.6vh, 1.45rem);
+            }
+            .sd-lv span {
+                margin-top: 2px; opacity: 0.92; font-weight: normal;
+                font-size: 2.2vh;
+                font-size: clamp(0.75rem, 2.3vh, 0.95rem);
+            }
             .sd-lv:active { transform: translateY(3px); box-shadow: none; }
             .sd-lv0 { background: #0d9488; }
             .sd-lv1 { background: #d97706; }
             .sd-lv2 { background: #7c3aed; }
 
-            #sd-endmsg { color: #fde68a; font-weight: bold; max-width: 460px; }
-            #sd-report { width: 100%; max-width: 560px; max-height: 42%; overflow-y: auto; -webkit-overflow-scrolling: touch;
+            #sd-endmsg { color: #fde68a; font-weight: bold; max-width: 460px; margin: 5px 0; }
+            #sd-report {
+                width: 100%; max-width: 560px; max-height: 42%; margin: 5px 0; overflow-y: auto; -webkit-overflow-scrolling: touch;
                 background: rgba(30, 41, 59, 0.85); border-radius: 10px; padding: 8px 12px; box-sizing: border-box;
-                text-align: left; color: #cbd5e1; font-size: 0.9rem; line-height: 1.4; }
+                text-align: left; color: #cbd5e1; font-size: 0.9rem; line-height: 1.4;
+            }
             .sd-rep-head { margin-bottom: 4px; }
             .sd-rep-title { color: #fbbf24; font-weight: bold; margin: 6px 0 4px 0; }
-            .sd-card { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; padding-bottom: 8px;
-                border-bottom: 1px solid rgba(255,255,255,0.08); }
-            .sd-card .dis { flex: 0 0 96px; width: 96px; height: 96px; background: #1e293b; border-radius: 8px; }
+            .sd-card {
+                display: -webkit-flex; display: flex;
+                -webkit-align-items: center; align-items: center;
+                margin-bottom: 8px; padding-bottom: 8px;
+                border-bottom: 1px solid rgba(255,255,255,0.08);
+            }
+            .sd-card .dis {
+                -webkit-flex: 0 0 96px; flex: 0 0 96px;
+                width: 96px; height: 96px; margin-right: 10px;
+                background: #1e293b; border-radius: 8px;
+            }
             .sd-card .dis svg { width: 100%; height: 100%; display: block; }
             .sd-card .q { color: #f8fafc; font-weight: bold; }
             .sd-card .r { color: #94a3b8; }
-            .sd-endbtns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+            .sd-endbtns {
+                display: -webkit-flex; display: flex;
+                -webkit-flex-wrap: wrap; flex-wrap: wrap;
+                -webkit-justify-content: center; justify-content: center;
+            }
+            .sd-endbtns .btn-start { margin: 5px; }
             .sd-overlay .btn-start { background: #14b8a6; box-shadow: 0 4px #0f766e; }
             .sd-overlay .btn-start.sd-alt { background: #64748b; box-shadow: 0 4px #475569; }
 
@@ -175,9 +296,9 @@ window.UGOConsole.registerCartridge({
 
             /* Schermo più largo che alto (telefono in orizzontale, PC, lavagna): disegno a sinistra, tastierino a destra */
             @media (orientation: landscape) {
-                #sd-main { flex-direction: row; gap: 8px; }
-                #sd-draw { flex: 1.25 1 0; }
-                #sd-side { flex: 1 1 0; }
+                #sd-main { -webkit-flex-direction: row; flex-direction: row; }
+                #sd-draw { -webkit-flex: 1.25 1 0px; flex: 1.25 1 0px; margin-bottom: 0; margin-right: 8px; }
+                #sd-side { -webkit-flex: 1 1 0px; flex: 1 1 0px; }
             }
         `;
         document.head.appendChild(styleCart);
