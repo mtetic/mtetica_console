@@ -75,9 +75,10 @@ window.UGOConsole.registerCartridge({
         const styleCart = document.createElement('style');
         styleCart.id = 'style-cartuccia-8';
         styleCart.innerHTML = `
-            #d08-root { position: relative; width: 100%; height: 100%; background: #0f172a; color: #f8fafc;
+            #d08-root { position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: #0f172a; color: #f8fafc;
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; box-sizing: border-box; }
-            #d08-container { width: 100%; height: 100%; display: flex; flex-direction: column; box-sizing: border-box;
+            #d08-container { position: absolute; top: 0; right: 0; bottom: 0; left: 0; display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column; box-sizing: border-box;
                 /* l'ultimo valore in basso è la fascia di respiro: tiene il campo lontano dal bordo */
                 padding: 6px 6px 14px 6px; padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
 
@@ -94,7 +95,7 @@ window.UGOConsole.registerCartridge({
             #d08-snd { background: #334155; border: none; border-radius: 8px; color: #fff; font-size: 1rem; padding: 3px 10px;
                 cursor: pointer; margin: 2px 4px; touch-action: manipulation; }
 
-            #d08-playfield { position: relative; flex: 1 1 0; min-height: 0; margin-top: 6px; background: #111827;
+            #d08-playfield { position: relative; -webkit-flex: 1 1 0px; flex: 1 1 0px; min-height: 0; margin-top: 6px; background: #111827;
                 border: 2px solid #334155; border-radius: 12px; overflow: hidden; touch-action: none; }
 
             .d08-zone { position: absolute; display: flex; align-items: center; justify-content: center; font-weight: bold;
