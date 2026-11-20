@@ -23,20 +23,28 @@ window.UGOConsole.registerCartridge({
                         <div id="pot-buffer"></div>
                     </div>
 
-                    <!-- Tastierino: occupa lo spazio che resta e si adatta, così OK è sempre visibile -->
+                    <!-- Tastierino a righe flex (compatibile con i browser vecchi) -->
                     <div id="pot-numpad">
-                        <button type="button" class="pot-key" data-k="1">1</button>
-                        <button type="button" class="pot-key" data-k="2">2</button>
-                        <button type="button" class="pot-key" data-k="3">3</button>
-                        <button type="button" class="pot-key" data-k="4">4</button>
-                        <button type="button" class="pot-key" data-k="5">5</button>
-                        <button type="button" class="pot-key" data-k="6">6</button>
-                        <button type="button" class="pot-key" data-k="7">7</button>
-                        <button type="button" class="pot-key" data-k="8">8</button>
-                        <button type="button" class="pot-key" data-k="9">9</button>
-                        <button type="button" class="pot-key pot-canc" data-k="C">C</button>
-                        <button type="button" class="pot-key" data-k="0">0</button>
-                        <button type="button" class="pot-key pot-ok" data-k="OK">OK</button>
+                        <div class="pot-row">
+                            <button type="button" class="pot-key" data-k="1">1</button>
+                            <button type="button" class="pot-key" data-k="2">2</button>
+                            <button type="button" class="pot-key" data-k="3">3</button>
+                        </div>
+                        <div class="pot-row">
+                            <button type="button" class="pot-key" data-k="4">4</button>
+                            <button type="button" class="pot-key" data-k="5">5</button>
+                            <button type="button" class="pot-key" data-k="6">6</button>
+                        </div>
+                        <div class="pot-row">
+                            <button type="button" class="pot-key" data-k="7">7</button>
+                            <button type="button" class="pot-key" data-k="8">8</button>
+                            <button type="button" class="pot-key" data-k="9">9</button>
+                        </div>
+                        <div class="pot-row">
+                            <button type="button" class="pot-key pot-canc" data-k="C">C</button>
+                            <button type="button" class="pot-key" data-k="0">0</button>
+                            <button type="button" class="pot-key pot-ok" data-k="OK">OK</button>
+                        </div>
                     </div>
                 </div>
 
@@ -60,18 +68,26 @@ window.UGOConsole.registerCartridge({
         const styleCart = document.createElement('style');
         styleCart.id = 'style-cartuccia-2';
         styleCart.innerHTML = `
+            /* Contenitore ancorato ai 4 lati dello slot: altezza SEMPRE definita,
+               anche sui browser vecchi delle lavagne */
             #pot-container {
-                position: relative; width: 100%; height: 100%;
-                display: flex; flex-direction: column; gap: 8px;
+                position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
                 padding: 8px; box-sizing: border-box;
                 background: #0f172a; color: #f8fafc; overflow: hidden;
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             }
             #pot-hud {
-                flex: 0 0 auto; width: 100%; max-width: 560px; margin: 0 auto;
-                display: flex; justify-content: space-between; align-items: center; gap: 8px;
+                -webkit-flex: 0 0 auto; flex: 0 0 auto;
+                width: 100%; max-width: 560px; margin: 0 auto 8px auto;
+                display: -webkit-flex; display: flex;
+                -webkit-justify-content: space-between; justify-content: space-between;
+                -webkit-align-items: center; align-items: center;
                 background: #334155; padding: 6px 12px; border-radius: 8px;
-                font-weight: bold; font-size: clamp(0.9rem, 3.2vh, 1.15rem); box-sizing: border-box;
+                font-weight: bold; box-sizing: border-box;
+                font-size: 3vh;
+                font-size: clamp(0.9rem, 3.2vh, 1.15rem);
             }
             .pot-timer { color: #f43f5e; }
             .pot-score { color: #22c55e; }
@@ -80,31 +96,57 @@ window.UGOConsole.registerCartridge({
                 padding: 4px 10px; font-size: 1rem; cursor: pointer; touch-action: manipulation;
             }
             #pot-main {
-                flex: 1 1 0; min-height: 0; width: 100%; max-width: 560px; margin: 0 auto;
-                display: flex; flex-direction: column; gap: 8px;
+                -webkit-flex: 1 1 0px; flex: 1 1 0px;
+                min-height: 0; width: 100%; max-width: 560px; margin: 0 auto;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
             }
             #pot-screen {
-                flex: 1 1 0; min-height: 0;
+                -webkit-flex: 1 1 0px; flex: 1 1 0px;
+                min-height: 0; margin-bottom: 8px;
                 background: #020617; border: 2px solid #475569; border-radius: 12px;
-                display: flex; flex-direction: column; justify-content: center; align-items: center;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
+                -webkit-justify-content: center; justify-content: center;
+                -webkit-align-items: center; align-items: center;
                 padding: 4px 8px; box-sizing: border-box; transition: border-color 0.15s;
             }
             #pot-screen.ok { border-color: #22c55e; }
             #pot-screen.ko { border-color: #ef4444; }
-            #pot-question { font-size: clamp(1.6rem, 7vh, 2.6rem); font-weight: bold; letter-spacing: 2px; text-align: center; }
+            #pot-question {
+                font-weight: bold; letter-spacing: 2px; text-align: center;
+                font-size: 6vh;
+                font-size: clamp(1.6rem, 7vh, 2.6rem);
+            }
             #pot-question sup { font-size: 0.65em; line-height: 0; }
-            #pot-buffer { font-size: clamp(1.3rem, 5.5vh, 2rem); color: #3b82f6; font-weight: bold; margin-top: 6px; min-height: 1.3em; }
+            #pot-buffer {
+                color: #3b82f6; font-weight: bold; margin-top: 6px; min-height: 1.3em;
+                font-size: 5vh;
+                font-size: clamp(1.3rem, 5.5vh, 2rem);
+            }
             #pot-numpad {
-                flex: 1.7 1 0; min-height: 0;
-                display: grid; grid-template-columns: repeat(3, 1fr);
-                grid-template-rows: repeat(4, minmax(0, 1fr)); gap: 8px;
+                -webkit-flex: 1.7 1 0px; flex: 1.7 1 0px;
+                min-height: 0;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
             }
+            .pot-row {
+                -webkit-flex: 1 1 0px; flex: 1 1 0px;
+                min-height: 0; margin-bottom: 8px;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: row; flex-direction: row;
+            }
+            .pot-row:last-child { margin-bottom: 0; }
             .pot-key {
-                width: 100%; height: 100%; padding: 0;
+                -webkit-flex: 1 1 0px; flex: 1 1 0px;
+                min-width: 0; margin: 0 8px 0 0; padding: 0;
                 background: #334155; color: #fff; border: none; border-radius: 10px;
-                font-size: clamp(1.1rem, 5vh, 1.9rem); font-weight: bold; cursor: pointer;
+                font-weight: bold; cursor: pointer;
                 touch-action: manipulation;
+                font-size: 4.5vh;
+                font-size: clamp(1.1rem, 5vh, 1.9rem);
             }
+            .pot-key:last-child { margin-right: 0; }
             .pot-key:active { background: #475569; }
             .pot-canc { background: #64748b; }
             .pot-ok { background: #22c55e; }
@@ -113,12 +155,30 @@ window.UGOConsole.registerCartridge({
             .pot-overlay {
                 position: absolute; top: 0; left: 0; width: 100%; height: 100%;
                 background: rgba(15, 23, 42, 0.96); z-index: 10;
-                display: flex; flex-direction: column; align-items: center; justify-content: center;
-                gap: 14px; padding: 16px; box-sizing: border-box; text-align: center; overflow-y: auto;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
+                -webkit-align-items: center; align-items: center;
+                -webkit-justify-content: center; justify-content: center;
+                padding: 16px; box-sizing: border-box; text-align: center; overflow-y: auto;
             }
-            .pot-overlay p { color: #94a3b8; max-width: 440px; line-height: 1.45; margin: 0; font-size: clamp(0.95rem, 2.8vh, 1.15rem); }
-            .pot-overlay h2 { color: #38bdf8; margin: 0; font-size: clamp(1.5rem, 5vh, 2.2rem); }
-            .pot-title { font-size: clamp(1.8rem, 7vh, 2.6rem); font-weight: 900; color: #3b82f6; text-shadow: 0 0 10px rgba(59,130,246,0.5); letter-spacing: 1px; }
+            /* niente "gap": si usano i margini */
+            .pot-overlay > * { margin-top: 7px; margin-bottom: 7px; }
+            .pot-overlay p {
+                color: #94a3b8; max-width: 440px; line-height: 1.45;
+                font-size: 2.6vh;
+                font-size: clamp(0.95rem, 2.8vh, 1.15rem);
+            }
+            .pot-overlay h2 {
+                color: #38bdf8; margin: 0;
+                font-size: 4.5vh;
+                font-size: clamp(1.5rem, 5vh, 2.2rem);
+            }
+            .pot-title {
+                font-weight: 900; color: #3b82f6;
+                text-shadow: 0 0 10px rgba(59,130,246,0.5); letter-spacing: 1px;
+                font-size: 6vh;
+                font-size: clamp(1.8rem, 7vh, 2.6rem);
+            }
             .pot-title span { color: #f43f5e; }
             .pot-overlay .btn-start { background: #3b82f6; box-shadow: 0 4px 14px rgba(59,130,246,0.4); }
 
@@ -127,7 +187,9 @@ window.UGOConsole.registerCartridge({
                 overflow-y: auto; -webkit-overflow-scrolling: touch;
                 background: rgba(30, 41, 59, 0.85); border-radius: 10px; padding: 8px 12px;
                 box-sizing: border-box; text-align: left; color: #cbd5e1;
-                font-size: clamp(0.8rem, 2.4vh, 0.95rem); line-height: 1.45;
+                line-height: 1.45;
+                font-size: 2.2vh;
+                font-size: clamp(0.8rem, 2.4vh, 0.95rem);
             }
             .pot-rep-head { margin-bottom: 6px; }
             .pot-rep-title { color: #fbbf24; font-weight: bold; margin-bottom: 4px; }
@@ -137,9 +199,9 @@ window.UGOConsole.registerCartridge({
 
             /* Telefono in orizzontale: schermo a sinistra, tastierino a destra */
             @media (orientation: landscape) and (max-height: 520px) {
-                #pot-main { flex-direction: row; }
-                #pot-screen { flex: 1 1 0; }
-                #pot-numpad { flex: 1 1 0; }
+                #pot-main { -webkit-flex-direction: row; flex-direction: row; }
+                #pot-screen { -webkit-flex: 1 1 0px; flex: 1 1 0px; margin-bottom: 0; margin-right: 8px; }
+                #pot-numpad { -webkit-flex: 1 1 0px; flex: 1 1 0px; }
             }
         `;
         document.head.appendChild(styleCart);
