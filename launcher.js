@@ -2,7 +2,7 @@
 
 // Cambia questo numero ogni volta che aggiorni un gioco: obbliga i dispositivi
 // (iPhone, lavagne) a scaricare la versione nuova invece di mostrare quella vecchia.
-var VERSIONE = "6";
+var VERSIONE = "7";
 
 // La scansione si ferma dopo questo numero di file mancanti consecutivi.
 // Così puoi togliere un gioco (es. 002game.js) senza perdere quelli successivi.
@@ -74,7 +74,7 @@ function mostraMenuPrincipale() {
     var bottoniHTML = '';
     cartucce.forEach(function(cart, idx) {
         bottoniHTML +=
-            '<button onclick="avviaCartuccia(' + idx + ')" style="background: ' + (cart.colore || '#0284c7') + '; color: white; border: none; padding: 20px 30px; font-size: 1.2rem; font-weight: bold; border-radius: 12px; cursor: pointer; box-shadow: 0 4px rgba(0,0,0,0.3);">' +
+            '<button onclick="avviaCartuccia(' + idx + ')" style="margin: 8px; background: ' + (cart.colore || '#0284c7') + '; color: white; border: none; padding: 20px 30px; font-size: 1.2rem; font-weight: bold; border-radius: 12px; cursor: pointer; box-shadow: 0 4px rgba(0,0,0,0.3);">' +
             cart.titolo +
             '</button>';
     });
