@@ -32,20 +32,28 @@ window.UGOConsole.registerCartridge({
                             <div id="cc-answer" class="cc-answer">_</div>
                         </div>
 
-                        <!-- Tastierino: 3 colonne x 4 righe, occupa lo spazio che resta -->
+                        <!-- Tastierino a righe flex (compatibile con i browser vecchi) -->
                         <div id="cc-keypad">
-                            <button type="button" class="cc-key" data-k="1">1</button>
-                            <button type="button" class="cc-key" data-k="2">2</button>
-                            <button type="button" class="cc-key" data-k="3">3</button>
-                            <button type="button" class="cc-key" data-k="4">4</button>
-                            <button type="button" class="cc-key" data-k="5">5</button>
-                            <button type="button" class="cc-key" data-k="6">6</button>
-                            <button type="button" class="cc-key" data-k="7">7</button>
-                            <button type="button" class="cc-key" data-k="8">8</button>
-                            <button type="button" class="cc-key" data-k="9">9</button>
-                            <button type="button" class="cc-key cc-del" data-k="DEL">←</button>
-                            <button type="button" class="cc-key" data-k="0">0</button>
-                            <button type="button" class="cc-key cc-enter" data-k="ENTER">INVIO</button>
+                            <div class="cc-row">
+                                <button type="button" class="cc-key" data-k="1">1</button>
+                                <button type="button" class="cc-key" data-k="2">2</button>
+                                <button type="button" class="cc-key" data-k="3">3</button>
+                            </div>
+                            <div class="cc-row">
+                                <button type="button" class="cc-key" data-k="4">4</button>
+                                <button type="button" class="cc-key" data-k="5">5</button>
+                                <button type="button" class="cc-key" data-k="6">6</button>
+                            </div>
+                            <div class="cc-row">
+                                <button type="button" class="cc-key" data-k="7">7</button>
+                                <button type="button" class="cc-key" data-k="8">8</button>
+                                <button type="button" class="cc-key" data-k="9">9</button>
+                            </div>
+                            <div class="cc-row">
+                                <button type="button" class="cc-key cc-del" data-k="DEL">←</button>
+                                <button type="button" class="cc-key" data-k="0">0</button>
+                                <button type="button" class="cc-key cc-enter" data-k="ENTER">INVIO</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -77,10 +85,17 @@ window.UGOConsole.registerCartridge({
         const styleCart = document.createElement('style');
         styleCart.id = 'style-cartuccia-4';
         styleCart.innerHTML = `
-            #cc-root { position: relative; width: 100%; height: 100%; background: #0f172a; color: #f8fafc; }
+            /* Radice e contenitore ancorati ai 4 lati dello slot: altezza SEMPRE definita,
+               anche sui browser vecchi delle lavagne */
+            #cc-root {
+                position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+                background: #0f172a; color: #f8fafc;
+            }
             #cc-container {
-                width: 100%; height: 100%; display: flex; flex-direction: column; gap: 8px;
-                padding: 10px; position: relative; box-sizing: border-box; overflow: hidden;
+                position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
+                padding: 10px; box-sizing: border-box; overflow: hidden;
                 border: 8px solid transparent;
                 transition: background-color 0.3s ease, border-color 0.3s ease;
             }
@@ -96,25 +111,38 @@ window.UGOConsole.registerCartridge({
             }
 
             .cc-header {
-                flex: 0 0 auto; width: 100%; max-width: 560px; margin: 0 auto;
-                display: flex; justify-content: space-between; align-items: center;
+                -webkit-flex: 0 0 auto; flex: 0 0 auto;
+                width: 100%; max-width: 560px; margin: 0 auto 8px auto;
+                display: -webkit-flex; display: flex;
+                -webkit-justify-content: space-between; justify-content: space-between;
+                -webkit-align-items: center; align-items: center;
                 background: rgba(0,0,0,0.4); padding: 6px 14px; border-radius: 12px; box-sizing: border-box;
             }
             .cc-stat { text-align: center; }
             .cc-stat-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: #aaa; }
-            .cc-stat-value { font-size: clamp(1.2rem, 4.5vh, 1.6rem); font-weight: 800; }
+            .cc-stat-value {
+                font-weight: 800;
+                font-size: 4vh;
+                font-size: clamp(1.2rem, 4.5vh, 1.6rem);
+            }
             .cc-pi {
                 text-align: center; background: rgba(255,255,255,0.1); padding: 6px 12px;
                 border-radius: 20px; font-weight: 700; font-size: 0.9rem; letter-spacing: 0.5px;
             }
 
             #cc-main {
-                flex: 1 1 0; min-height: 0; width: 100%; max-width: 560px; margin: 0 auto;
-                display: flex; flex-direction: column; gap: 8px;
+                -webkit-flex: 1 1 0px; flex: 1 1 0px;
+                min-height: 0; width: 100%; max-width: 560px; margin: 0 auto;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
             }
             .cc-question-container {
-                flex: 1 1 0; min-height: 0; text-align: center;
-                display: flex; flex-direction: column; justify-content: center; align-items: center;
+                -webkit-flex: 1 1 0px; flex: 1 1 0px;
+                min-height: 0; text-align: center; margin-bottom: 8px;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
+                -webkit-justify-content: center; justify-content: center;
+                -webkit-align-items: center; align-items: center;
             }
             .cc-badge {
                 display: inline-block; padding: 4px 12px; border-radius: 12px;
@@ -125,38 +153,72 @@ window.UGOConsole.registerCartridge({
             .cc-badge-mostro { background: #dc2626; color: #fff; }
 
             .cc-question-text {
-                font-size: clamp(1.1rem, 4.5vh, 1.7rem); font-weight: 700; line-height: 1.3;
-                display: flex; align-items: center; justify-content: center; text-align: center;
+                font-weight: 700; line-height: 1.3; text-align: center;
+                font-size: 4vh;
+                font-size: clamp(1.1rem, 4.5vh, 1.7rem);
             }
             .cc-answer {
                 background: rgba(0,0,0,0.6); border: 2px solid rgba(255,255,255,0.2); border-radius: 12px;
-                height: clamp(42px, 9vh, 60px); width: 100%; max-width: 280px; margin: 10px auto 0 auto;
-                display: flex; align-items: center; justify-content: center;
-                font-size: clamp(1.5rem, 6vh, 2.2rem); font-weight: 800; letter-spacing: 2px; color: #00ffcc;
+                height: 8vh; min-height: 42px;
+                height: clamp(42px, 9vh, 60px);
+                width: 100%; max-width: 280px; margin: 10px auto 0 auto;
+                display: -webkit-flex; display: flex;
+                -webkit-align-items: center; align-items: center;
+                -webkit-justify-content: center; justify-content: center;
+                font-weight: 800; letter-spacing: 2px; color: #00ffcc;
+                font-size: 5.5vh;
+                font-size: clamp(1.5rem, 6vh, 2.2rem);
             }
 
             #cc-keypad {
-                flex: 1.7 1 0; min-height: 0; width: 100%; max-width: 360px; margin: 0 auto;
-                display: grid; grid-template-columns: repeat(3, 1fr);
-                grid-template-rows: repeat(4, minmax(0, 1fr)); gap: 8px;
+                -webkit-flex: 1.7 1 0px; flex: 1.7 1 0px;
+                min-height: 0; width: 100%; max-width: 360px; margin: 0 auto;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
             }
+            .cc-row {
+                -webkit-flex: 1 1 0px; flex: 1 1 0px;
+                min-height: 0; margin-bottom: 8px;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: row; flex-direction: row;
+            }
+            .cc-row:last-child { margin-bottom: 0; }
             .cc-key {
-                width: 100%; height: 100%; padding: 0;
+                -webkit-flex: 1 1 0px; flex: 1 1 0px;
+                min-width: 0; margin: 0 8px 0 0; padding: 0;
                 background: rgba(255,255,255,0.12); border: none; border-radius: 12px; color: #fff;
-                font-size: clamp(1.1rem, 5vh, 1.9rem); font-weight: 700; cursor: pointer;
+                font-weight: 700; cursor: pointer;
                 touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+                font-size: 4.5vh;
+                font-size: clamp(1.1rem, 5vh, 1.9rem);
             }
+            .cc-key:last-child { margin-right: 0; }
             .cc-key:active { background: rgba(255,255,255,0.3); }
             .cc-del { background: rgba(220, 38, 38, 0.4); }
-            .cc-enter { background: rgba(46, 164, 79, 0.6); font-size: clamp(0.85rem, 3.4vh, 1.3rem); }
+            .cc-enter {
+                background: rgba(46, 164, 79, 0.6);
+                font-size: 3vh;
+                font-size: clamp(0.85rem, 3.4vh, 1.3rem);
+            }
 
             .cc-overlay {
                 position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #121212;
-                display: flex; flex-direction: column; justify-content: center; align-items: center;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
+                -webkit-justify-content: center; justify-content: center;
+                -webkit-align-items: center; align-items: center;
                 padding: 20px; text-align: center; z-index: 10; overflow-y: auto; box-sizing: border-box;
             }
-            .cc-overlay h1 { font-size: clamp(1.8rem, 6vh, 2.4rem); margin: 0 0 10px 0; color: #2ea44f; }
-            .cc-overlay p { font-size: clamp(0.9rem, 2.8vh, 1rem); color: #ccc; margin: 0 0 20px 0; max-width: 320px; line-height: 1.4; }
+            .cc-overlay h1 {
+                margin: 0 0 10px 0; color: #2ea44f;
+                font-size: 5.5vh;
+                font-size: clamp(1.8rem, 6vh, 2.4rem);
+            }
+            .cc-overlay p {
+                color: #ccc; margin: 0 0 20px 0; max-width: 320px; line-height: 1.4;
+                font-size: 2.6vh;
+                font-size: clamp(0.9rem, 2.8vh, 1rem);
+            }
             .cc-overlay .btn-start { background: #2ea44f; border-radius: 30px; text-transform: uppercase; box-shadow: 0 4px 15px rgba(46,164,79,0.4); }
             .cc-hidden { display: none !important; }
 
@@ -165,7 +227,9 @@ window.UGOConsole.registerCartridge({
                 overflow-y: auto; -webkit-overflow-scrolling: touch;
                 background: rgba(255,255,255,0.07); border-radius: 10px; padding: 8px 12px;
                 box-sizing: border-box; text-align: left; color: #d4d4d8;
-                font-size: clamp(0.8rem, 2.4vh, 0.95rem); line-height: 1.45;
+                line-height: 1.45;
+                font-size: 2.2vh;
+                font-size: clamp(0.8rem, 2.4vh, 0.95rem);
             }
             .cc-rep-head { margin-bottom: 6px; }
             .cc-rep-title { color: #fbbf24; font-weight: bold; margin-bottom: 4px; }
@@ -175,9 +239,9 @@ window.UGOConsole.registerCartridge({
 
             /* Telefono in orizzontale: domanda a sinistra, tastierino a destra */
             @media (orientation: landscape) and (max-height: 520px) {
-                #cc-main { flex-direction: row; max-width: 900px; }
-                .cc-question-container { flex: 1 1 0; }
-                #cc-keypad { flex: 1 1 0; max-width: none; margin: 0; }
+                #cc-main { -webkit-flex-direction: row; flex-direction: row; max-width: 900px; }
+                .cc-question-container { -webkit-flex: 1 1 0px; flex: 1 1 0px; margin-bottom: 0; margin-right: 8px; }
+                #cc-keypad { -webkit-flex: 1 1 0px; flex: 1 1 0px; max-width: none; margin: 0; }
             }
         `;
         document.head.appendChild(styleCart);
