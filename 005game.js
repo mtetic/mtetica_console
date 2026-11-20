@@ -29,11 +29,16 @@ window.UGOConsole.registerCartridge({
                                 <button type="button" class="ag-btn ag-sp" data-id="7"><span class="n">270°</span></button>
                                 <button type="button" class="ag-btn ag-sp" data-id="8"><span class="n">GIRO</span><span class="g">360°</span></button>
                             </div>
+                            <!-- Pulsanti normali a 2 righe flex (compatibile con i browser vecchi) -->
                             <div class="ag-normals" id="ag-normals">
-                                <button type="button" class="ag-btn ag-b0" data-id="0">0° &lt; &alpha; &lt; 90°</button>
-                                <button type="button" class="ag-btn ag-b1" data-id="1">90° &lt; &alpha; &lt; 180°</button>
-                                <button type="button" class="ag-btn ag-b2" data-id="2">180° &lt; &alpha; &lt; 270°</button>
-                                <button type="button" class="ag-btn ag-b3" data-id="3">270° &lt; &alpha; &lt; 360°</button>
+                                <div class="ag-nrow">
+                                    <button type="button" class="ag-btn ag-b0" data-id="0">0° &lt; &alpha; &lt; 90°</button>
+                                    <button type="button" class="ag-btn ag-b1" data-id="1">90° &lt; &alpha; &lt; 180°</button>
+                                </div>
+                                <div class="ag-nrow">
+                                    <button type="button" class="ag-btn ag-b2" data-id="2">180° &lt; &alpha; &lt; 270°</button>
+                                    <button type="button" class="ag-btn ag-b3" data-id="3">270° &lt; &alpha; &lt; 360°</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -60,72 +65,165 @@ window.UGOConsole.registerCartridge({
         const styleCart = document.createElement('style');
         styleCart.id = 'style-cartuccia-5';
         styleCart.innerHTML = `
-            #ag-root { position: relative; width: 100%; height: 100%; background: #0f172a; color: #f8fafc;
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-            #ag-container { width: 100%; height: 100%; display: flex; flex-direction: column; gap: 6px;
-                padding: 8px; box-sizing: border-box; overflow: hidden; }
+            /* Radice e contenitore ancorati ai 4 lati dello slot: altezza SEMPRE definita,
+               anche sui browser vecchi delle lavagne */
+            #ag-root {
+                position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+                background: #0f172a; color: #f8fafc;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+            #ag-container {
+                position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
+                padding: 8px; box-sizing: border-box; overflow: hidden;
+            }
 
-            .ag-hud { flex: 0 0 auto; width: 100%; max-width: 900px; margin: 0 auto; box-sizing: border-box;
-                display: flex; justify-content: space-between; background: #1e293b; border: 1px solid #334155;
-                border-radius: 8px; padding: 6px 14px; font-weight: bold; font-size: 1.05rem; font-size: clamp(0.9rem, 3vh, 1.15rem); }
+            .ag-hud {
+                -webkit-flex: 0 0 auto; flex: 0 0 auto;
+                width: 100%; max-width: 900px; margin: 0 auto 6px auto; box-sizing: border-box;
+                display: -webkit-flex; display: flex;
+                -webkit-justify-content: space-between; justify-content: space-between;
+                background: #1e293b; border: 1px solid #334155;
+                border-radius: 8px; padding: 6px 14px; font-weight: bold;
+                font-size: 3vh;
+                font-size: clamp(0.9rem, 3vh, 1.15rem);
+            }
             .ag-val { color: #38bdf8; }
             .ag-time { color: #ef4444; }
 
-            #ag-msg { flex: 0 0 auto; min-height: 1.7em; line-height: 1.7em; text-align: center; font-weight: bold;
-                color: #4ade80; font-size: 1.1rem; font-size: clamp(1rem, 3.4vh, 1.4rem); }
+            #ag-msg {
+                -webkit-flex: 0 0 auto; flex: 0 0 auto;
+                min-height: 1.7em; line-height: 1.7em; text-align: center; font-weight: bold;
+                color: #4ade80; margin-bottom: 6px;
+                font-size: 3vh;
+                font-size: clamp(1rem, 3.4vh, 1.4rem);
+            }
 
-            #ag-main { flex: 1 1 0; min-height: 0; width: 100%; max-width: 900px; margin: 0 auto;
-                display: flex; flex-direction: column; gap: 6px; }
-            #ag-draw { flex: 1 1 0; min-height: 0; background: #1e293b; border: 2px solid #334155; border-radius: 12px;
-                display: flex; align-items: center; justify-content: center; overflow: hidden; }
-            #ag-draw svg { width: 100%; height: 100%; }
+            #ag-main {
+                -webkit-flex: 1 1 0px; flex: 1 1 0px;
+                min-height: 0; width: 100%; max-width: 900px; margin: 0 auto;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
+            }
+            /* Riquadro del disegno: l'SVG sta in posizione assoluta, così riempie
+               sempre il riquadro anche sui browser vecchi */
+            #ag-draw {
+                -webkit-flex: 1 1 0px; flex: 1 1 0px;
+                min-height: 0; margin-bottom: 6px; position: relative;
+                background: #1e293b; border: 2px solid #334155; border-radius: 12px;
+                overflow: hidden;
+            }
+            #ag-draw svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
-            #ag-panel { flex: 0 0 34vh; flex: 0 0 min(36vh, 300px); min-height: 0; display: flex; flex-direction: column; gap: 6px; }
-            .ag-specials { flex: 0.8 1 0; min-height: 0; display: flex; gap: 6px; }
-            .ag-normals { flex: 1.5 1 0; min-height: 0; display: grid; grid-template-columns: 1fr 1fr;
-                grid-template-rows: 1fr 1fr; gap: 6px; }
+            #ag-panel {
+                -webkit-flex: 0 0 34vh; flex: 0 0 34vh;
+                -webkit-flex: 0 0 min(36vh, 300px); flex: 0 0 min(36vh, 300px);
+                min-height: 0;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
+            }
+            .ag-specials {
+                -webkit-flex: 0.8 1 0px; flex: 0.8 1 0px;
+                min-height: 0; margin-bottom: 6px;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: row; flex-direction: row;
+            }
+            .ag-normals {
+                -webkit-flex: 1.5 1 0px; flex: 1.5 1 0px;
+                min-height: 0;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
+            }
+            .ag-nrow {
+                -webkit-flex: 1 1 0px; flex: 1 1 0px;
+                min-height: 0; margin-bottom: 6px;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: row; flex-direction: row;
+            }
+            .ag-nrow:last-child { margin-bottom: 0; }
 
-            .ag-btn { border: none; border-radius: 10px; color: #fff; font-weight: bold; cursor: pointer; padding: 0 4px;
-                font-size: 1rem; font-size: clamp(0.8rem, 2.8vh, 1.15rem); box-shadow: 0 3px rgba(0,0,0,0.35);
+            .ag-btn {
+                border: none; border-radius: 10px; color: #fff; font-weight: bold; cursor: pointer; padding: 0 4px;
+                margin: 0 6px 0 0;
+                font-size: 2.6vh;
+                font-size: clamp(0.8rem, 2.8vh, 1.15rem);
+                box-shadow: 0 3px rgba(0,0,0,0.35);
                 touch-action: manipulation; -webkit-tap-highlight-color: transparent; outline: none;
-                transition: opacity 0.15s; min-width: 0; }
+                transition: opacity 0.15s; min-width: 0;
+            }
+            .ag-btn:last-child { margin-right: 0; }
+            .ag-nrow .ag-btn { -webkit-flex: 1 1 0px; flex: 1 1 0px; }
             .ag-btn:active { transform: translateY(3px); box-shadow: none; }
             .ag-b0 { background: #0d9488; }
             .ag-b1 { background: #d97706; }
             .ag-b2 { background: #dc2626; }
             .ag-b3 { background: #7c3aed; }
-            .ag-sp { flex: 1; background: #fbbf24; color: #1f2937; display: flex; flex-direction: column;
-                align-items: center; justify-content: center; line-height: 1.15; font-size: 0.75rem; font-size: clamp(0.65rem, 2.3vh, 0.95rem); }
+            .ag-sp {
+                -webkit-flex: 1 1 0px; flex: 1 1 0px;
+                background: #fbbf24; color: #1f2937;
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
+                -webkit-align-items: center; align-items: center;
+                -webkit-justify-content: center; justify-content: center;
+                line-height: 1.15;
+                font-size: 2.1vh;
+                font-size: clamp(0.65rem, 2.3vh, 0.95rem);
+            }
             .ag-sp .n { font-weight: 800; }
-            .ag-off { opacity: 0.28; filter: saturate(0.3); }
+            .ag-off { opacity: 0.28; -webkit-filter: saturate(0.3); filter: saturate(0.3); }
 
-            .ag-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.96);
-                display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
-                padding: 14px; box-sizing: border-box; text-align: center; z-index: 10; overflow-y: auto; }
-            .ag-overlay h2 { font-size: 1.8rem; font-size: clamp(1.4rem, 5vh, 2.1rem); color: #38bdf8; margin: 0; }
-            .ag-overlay p { font-size: 1.05rem; font-size: clamp(0.95rem, 2.8vh, 1.2rem); margin: 0; color: #94a3b8; max-width: 460px; line-height: 1.4; }
-            .ag-overlay .btn-start { background: #22c55e; box-shadow: 0 4px #16a34a; }
+            .ag-overlay {
+                position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.96);
+                display: -webkit-flex; display: flex;
+                -webkit-flex-direction: column; flex-direction: column;
+                -webkit-align-items: center; align-items: center;
+                -webkit-justify-content: center; justify-content: center;
+                padding: 14px; box-sizing: border-box; text-align: center; z-index: 10; overflow-y: auto;
+            }
+            /* niente "gap": si usano i margini */
+            .ag-overlay h2 {
+                color: #38bdf8; margin: 5px 0;
+                font-size: 4.5vh;
+                font-size: clamp(1.4rem, 5vh, 2.1rem);
+            }
+            .ag-overlay p {
+                margin: 5px 0; color: #94a3b8; max-width: 460px; line-height: 1.4;
+                font-size: 2.6vh;
+                font-size: clamp(0.95rem, 2.8vh, 1.2rem);
+            }
+            .ag-overlay .btn-start { background: #22c55e; box-shadow: 0 4px #16a34a; margin: 8px 0 5px 0; }
 
-            #ag-report { width: 100%; max-width: 560px; max-height: 46%; overflow-y: auto; -webkit-overflow-scrolling: touch;
+            #ag-report {
+                width: 100%; max-width: 560px; max-height: 46%; overflow-y: auto; -webkit-overflow-scrolling: touch;
                 background: rgba(30, 41, 59, 0.85); border-radius: 10px; padding: 8px 12px; box-sizing: border-box;
-                text-align: left; color: #cbd5e1; font-size: 0.9rem; line-height: 1.4; }
+                text-align: left; color: #cbd5e1; font-size: 0.9rem; line-height: 1.4; margin: 5px 0;
+            }
             .ag-rep-head { margin-bottom: 6px; }
             .ag-rep-title { color: #fbbf24; font-weight: bold; margin: 8px 0 4px 0; }
-            .ag-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-            .ag-chip { padding: 2px 8px; border-radius: 10px; font-size: 0.8rem; background: rgba(34,197,94,0.25); color: #bbf7d0; }
+            .ag-chips { display: -webkit-flex; display: flex; -webkit-flex-wrap: wrap; flex-wrap: wrap; }
+            .ag-chip { padding: 2px 8px; margin: 0 6px 6px 0; border-radius: 10px; font-size: 0.8rem; background: rgba(34,197,94,0.25); color: #bbf7d0; }
             .ag-chip.ko { background: rgba(251,191,36,0.25); color: #fde68a; }
-            .ag-card { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; padding-bottom: 8px;
-                border-bottom: 1px solid rgba(255,255,255,0.08); }
-            .ag-card .dis { flex: 0 0 84px; width: 84px; height: 84px; background: #1e293b; border-radius: 8px; }
+            .ag-card {
+                display: -webkit-flex; display: flex;
+                -webkit-align-items: center; align-items: center;
+                margin-bottom: 8px; padding-bottom: 8px;
+                border-bottom: 1px solid rgba(255,255,255,0.08);
+            }
+            .ag-card .dis {
+                -webkit-flex: 0 0 84px; flex: 0 0 84px;
+                width: 84px; height: 84px; margin-right: 10px;
+                background: #1e293b; border-radius: 8px;
+            }
             .ag-card .dis svg { width: 100%; height: 100%; display: block; }
             .ag-card .q { color: #f8fafc; font-weight: bold; }
             .ag-card .r { color: #94a3b8; }
 
             /* Telefono in orizzontale: disegno a sinistra, tasti a destra */
             @media (orientation: landscape) and (max-height: 520px) {
-                #ag-main { flex-direction: row; }
-                #ag-draw { flex: 1 1 0; }
-                #ag-panel { flex: 1 1 0; }
+                #ag-main { -webkit-flex-direction: row; flex-direction: row; }
+                #ag-draw { -webkit-flex: 1 1 0px; flex: 1 1 0px; margin-bottom: 0; margin-right: 6px; }
+                #ag-panel { -webkit-flex: 1 1 0px; flex: 1 1 0px; }
             }
         `;
         document.head.appendChild(styleCart);
