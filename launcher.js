@@ -2,7 +2,7 @@
 
 // Cambia questo numero ogni volta che aggiorni un gioco: obbliga i dispositivi
 // (iPhone, lavagne) a scaricare la versione nuova invece di mostrare quella vecchia.
-var VERSIONE = "13";
+var VERSIONE = "14";
 
 // ELENCO DEI GIOCHI, NELL'ORDINE IN CUI COMPAIONO NEL MENU.
 // Il numero davanti al titolo lo scrive il launcher da solo, in base alla posizione.
@@ -14,6 +14,7 @@ var VERSIONE = "13";
 var ORDINE = [
     "009game.js",   // Pescatore&Telepatico
     "007game.js",   // Operiamo!
+    "012game.js",   // Enti geometrici
     "002game.js",   // chePOTENZA!!!
     "005game.js",   // Dietro l'angolo
     "008game.js",   // Dividendo...
