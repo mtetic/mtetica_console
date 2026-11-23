@@ -1,41 +1,53 @@
-// --- LAUNCHER INTELLIGENTE (AUTO-DISCOVERY) ---
+// --- LAUNCHER (ORDINE DECISO DA ELENCO) ---
 
 // Cambia questo numero ogni volta che aggiorni un gioco: obbliga i dispositivi
 // (iPhone, lavagne) a scaricare la versione nuova invece di mostrare quella vecchia.
-var VERSIONE = "7";
+var VERSIONE = "11";
 
-// La scansione si ferma dopo questo numero di file mancanti consecutivi.
-// Così puoi togliere un gioco (es. 002game.js) senza perdere quelli successivi.
-var MAX_BUCHI = 3;
-
-function nomeFile(n) {
-    return ('00' + n).slice(-3) + 'game.js'; // 001game.js, 002game.js, ...
-}
+// ELENCO DEI GIOCHI, NELL'ORDINE IN CUI COMPAIONO NEL MENU.
+// Il numero davanti al titolo lo scrive il launcher da solo, in base alla posizione.
+// - Per SPOSTARE un gioco: sposta la sua riga su o giù.
+// - Per AGGIUNGERE un gioco: carica il file nella cartella e scrivi qui il suo nome,
+//   nel punto in cui vuoi che compaia. Gli altri scalano da soli.
+// - Per TOGLIERE un gioco: cancella la sua riga.
+// Attenzione: tutte le righe tranne l'ultima devono finire con la virgola.
+var ORDINE = [
+    "009game.js",   // Pescatore&Telepatico
+    "007game.js",   // Operiamo!
+    "002game.js",   // chePOTENZA!!!
+    "005game.js",   // Dietro l'angolo
+    "008game.js",   // Dividendo...
+    "001game.js",   // Primi palloncini
+    "011game.js",   // Spaccapianeti
+    "010game.js",   // Rettangoli e quadrati
+    "004game.js",   // Circa-Cerchio
+    "003game.js",   // Frazioniamo relativamente???
+    "006game.js"    // Solidamente!
+];
 
 function scansionaCartucce() {
-    var index = 1;
-    var buchi = 0;
+    var index = 0;
 
     function prossimo() {
-        if (buchi >= MAX_BUCHI || index > 99) {
+        if (index >= ORDINE.length) {
+            numeraCartucce();
             mostraMenuPrincipale();
             return;
         }
 
         var script = document.createElement('script');
-        script.src = nomeFile(index) + '?v=' + VERSIONE;
+        script.src = ORDINE[index] + '?v=' + VERSIONE;
 
         // File trovato: si registra da solo, si passa al successivo
         script.onload = function() {
-            buchi = 0;
             index++;
             prossimo();
         };
 
-        // File mancante: lo conto come "buco" e provo il successivo
+        // File mancante: lo salto e passo al successivo
         script.onerror = function() {
             script.remove();
-            buchi++;
+            console.error('File non trovato: ' + ORDINE[index]);
             index++;
             prossimo();
         };
@@ -44,6 +56,16 @@ function scansionaCartucce() {
     }
 
     prossimo();
+}
+
+// I giochi si registrano nell'ordine in cui vengono caricati, cioè quello dell'elenco.
+// Qui si mette il numero giusto davanti al titolo (togliendo quello scritto a mano, se c'è).
+function numeraCartucce() {
+    var lista = window.UGOConsole.cartridges || [];
+    for (var i = 0; i < lista.length; i++) {
+        var t = String(lista[i].titolo).replace(/^\s*\d+\s*\.\s*/, '');
+        lista[i].titolo = (i + 1) + '. ' + t;
+    }
 }
 
 function loadMenu() {
@@ -66,7 +88,7 @@ function mostraMenuPrincipale() {
         slot.innerHTML =
             '<div style="text-align: center; padding: 20px; color: #94a3b8;">' +
             '<h1 style="color: #38bdf8; font-size: 2.2rem; margin-bottom: 10px;">🎮 Progetto Console</h1>' +
-            '<p>Nessuna cartuccia trovata nella cartella (verifica che i file si chiamino 001game.js, 002game.js...)</p>' +
+            '<p>Nessuna cartuccia trovata (verifica che i nomi nell\'elenco ORDINE di launcher.js corrispondano ai file)</p>' +
             '</div>';
         return;
     }
@@ -136,5 +158,5 @@ function mostraErrore_vuoto(titolo) {
     mostraErroreCartuccia(titolo);
 }
 
-// Avvia automaticamente la scansione all'apertura della pagina
+// Avvia automaticamente il caricamento all'apertura della pagina
 scansionaCartucce();

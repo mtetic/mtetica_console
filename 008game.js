@@ -1,8 +1,8 @@
-// --- CARTUCCIA 008: DIVISIBILITÀ EXTREMA ---
+// --- CARTUCCIA 008: DIVIDENDO... ---
 
 window.UGOConsole.registerCartridge({
     id: 8,
-    titolo: "8. Divisibilità Extrema",
+    titolo: "8. Dividendo...",
     colore: "#0284c7",
     avvia: function() {
         const slot = document.getElementById('cartridge-slot');
@@ -45,7 +45,7 @@ window.UGOConsole.registerCartridge({
 
                 <!-- Istruzioni iniziali -->
                 <div id="d08-start-overlay" class="d08-overlay">
-                    <h2>Divisibilità Extrema</h2>
+                    <h2>Dividendo...</h2>
                     <p>Ogni numero è divisibile per <b>almeno uno</b> tra 2, 3, 4, 5, 7 e 11. Scopri per quale e smistalo!</p>
                     <ul class="d08-rules">
                         <li><span class="d08-dot" style="background:#22c55e;"></span><b>÷ 2</b> &nbsp;trascinalo <b>a destra</b> &nbsp;➔ <b>1 punto</b></li>
@@ -311,7 +311,7 @@ window.UGOConsole.registerCartridge({
 
         function updateConsole() {
             if (window.UGOConsole) {
-                window.UGOConsole.setTitle("Divisibilità Extrema");
+                window.UGOConsole.setTitle("Dividendo...");
                 window.UGOConsole.setScore(score);
                 if (window.UGOConsole.setTimerLabel) window.UGOConsole.setTimerLabel("Gruppo");
                 window.UGOConsole.setTimer(currentSet + "/" + TOTAL_SETS);

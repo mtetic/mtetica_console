@@ -1,4 +1,4 @@
-// --- CARTUCCIA 003: FRAZIONIAMO??? ---
+// --- CARTUCCIA 003: FRAZIONIAMO RELATIVAMENTE??? ---
 
 window.UGOConsole.registerCartridge({
     id: 3,
@@ -46,7 +46,7 @@ window.UGOConsole.registerCartridge({
             </div>
 
             <div id="fraz-start-overlay" class="overlay">
-                <h1 style="color:#8b5cf6; font-size:2.8rem; margin-bottom:15px;">Frazioniamo???</h1>
+                <h1 style="color:#8b5cf6; font-size:2.8rem; margin-bottom:15px;">Frazioniamo relativamente???</h1>
                 <p style="color:#94a3b8; font-size:1.1rem; max-width:500px; line-height:1.5; margin-bottom:25px;">
                     Affronta somme algebriche, moltiplicazioni e divisioni tra frazioni passo dopo passo.<br>
                     Meno errori fai, più punti guadagni!
@@ -218,7 +218,7 @@ window.UGOConsole.registerCartridge({
 
         function updateConsoleHeader() {
             if (window.UGOConsole) {
-                window.UGOConsole.setTitle("Frazioniamo???");
+                window.UGOConsole.setTitle("Frazioniamo relativamente???");
                 window.UGOConsole.setScore(totalScore);
                 if (window.UGOConsole.setTimerLabel) window.UGOConsole.setTimerLabel("Esercizio");
                 window.UGOConsole.setTimer(Math.min(exerciseCount + 1, TOTAL_EXERCISES) + "/" + TOTAL_EXERCISES);

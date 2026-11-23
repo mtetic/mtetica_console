@@ -1,8 +1,8 @@
-// --- CARTUCCIA 005: SFIDA DEGLI ANGOLI ---
+// --- CARTUCCIA 005: DIETRO L'ANGOLO ---
 
 window.UGOConsole.registerCartridge({
     id: 5,
-    titolo: "5. Sfida degli Angoli",
+    titolo: "5. Dietro l'angolo",
     colore: "#0ea5e9",
     avvia: function() {
         const slot = document.getElementById('cartridge-slot');
@@ -383,7 +383,7 @@ window.UGOConsole.registerCartridge({
         // --- FLUSSO ---
         function aggiornaConsole() {
             if (window.UGOConsole) {
-                window.UGOConsole.setTitle("Sfida degli Angoli");
+                window.UGOConsole.setTitle("Dietro l'angolo");
                 window.UGOConsole.setScore(punti);
                 window.UGOConsole.setTimer(Math.max(0, tempoResiduo) + "s");
             }
