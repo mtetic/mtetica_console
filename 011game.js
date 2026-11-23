@@ -221,6 +221,15 @@ window.UGOConsole.registerCartridge({
 
         // ===================== DIMENSIONI DEL CAMPO =====================
         function misura() {
+// Su schermi larghi il gioco sta in un rettangolo centrato, più alto che largo
+            const sw = slot.clientWidth, sh = slot.clientHeight;
+            if (sw && sh) {
+                const w = Math.min(sw, Math.round(sh * 0.62));
+                const m = Math.floor((sw - w) / 2);
+                const cont = el('sp-container');
+                cont.style.left = m + 'px';
+                cont.style.right = m + 'px';
+            }
             const cw = field.clientWidth, ch = field.clientHeight;
             if (!cw || !ch) return;
             const dpr = Math.min(window.devicePixelRatio || 1, 2);
