@@ -134,6 +134,23 @@
         }
         .btn-start:active { transform: translateY(2px); box-shadow: 0 2px rgba(0, 0, 0, 0.35); }
 
+        /* Tasto per uscire dal tutto schermo (solo in tutto schermo) */
+#btn-exit-fs {
+    display: none;
+    position: absolute;
+    top: calc(8px + env(safe-area-inset-top));
+    right: 8px;
+    z-index: 50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: rgba(2, 132, 199, 0.75);
+}
+body.is-fullscreen #btn-exit-fs { display: block; }
         /* --- STATI (gestiti da JS, funzionano anche su browser vecchi) --- */
         body.in-game #btn-menu { display: inline-block; }
         body.is-fullscreen #console-header { display: none; }
@@ -169,6 +186,7 @@
 
         <!-- MENU FLUTTUANTE (solo in tutto schermo, dentro un gioco) -->
         <button id="btn-menu-float" type="button">&#9776; Menu</button>
+        <button id="btn-exit-fs" type="button">&#10005; Esci da tutto schermo</button>
 
         <!-- AREA CENTRALE (SLOT DELLA CARTUCCIA) -->
         <main id="cartridge-slot">
@@ -205,7 +223,15 @@
             }
         });
 
-        function aggiornaStatoFullscreen() {
+            document.getElementById('btn-exit-fs').addEventListener('click', function() {
+    try {
+        if (isFullscreen() && exitFs) exitFs.call(document);
+    } catch (err) {
+        console.error('Impossibile uscire dal tutto schermo: ' + err.message);
+    }
+});
+            
+            function aggiornaStatoFullscreen() {
             document.body.classList.toggle('is-fullscreen', isFullscreen());
         }
         document.addEventListener('fullscreenchange', aggiornaStatoFullscreen);
@@ -270,7 +296,7 @@
     </script>
 
     <!-- IL GUSCIO CARICA SOLO IL LAUNCHER INTELLIGENTE -->
-    <script src="launcher.js?V=11"
+    <script src="launcher.js?V=13"
         onerror="document.getElementById('cartridge-slot').innerHTML='<div style=&quot;color:#fca5a5;padding:20px;text-align:center;font-size:1.2rem;&quot;>Impossibile caricare launcher.js.<br>Controlla che il file sia nella stessa cartella di index.html.</div>'"></script>
 </body>
 </html>

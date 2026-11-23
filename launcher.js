@@ -2,7 +2,7 @@
 
 // Cambia questo numero ogni volta che aggiorni un gioco: obbliga i dispositivi
 // (iPhone, lavagne) a scaricare la versione nuova invece di mostrare quella vecchia.
-var VERSIONE = "11";
+var VERSIONE = "13";
 
 // ELENCO DEI GIOCHI, NELL'ORDINE IN CUI COMPAIONO NEL MENU.
 // Il numero davanti al titolo lo scrive il launcher da solo, in base alla posizione.
@@ -96,7 +96,7 @@ function mostraMenuPrincipale() {
     var bottoniHTML = '';
     cartucce.forEach(function(cart, idx) {
         bottoniHTML +=
-            '<button onclick="avviaCartuccia(' + idx + ')" style="margin: 8px; background: ' + (cart.colore || '#0284c7') + '; color: white; border: none; padding: 20px 30px; font-size: 1.2rem; font-weight: bold; border-radius: 12px; cursor: pointer; box-shadow: 0 4px rgba(0,0,0,0.3);">' +
+            '<button onclick="avviaCartuccia(' + idx + ')" style="margin: 0; width: 100%; background: ' + (cart.colore || '#0284c7') + '; color: white; border: none; padding: 20px 30px; font-size: 1.2rem; font-weight: bold; border-radius: 12px; cursor: pointer; box-shadow: 0 4px rgba(0,0,0,0.3);">' +
             cart.titolo +
             '</button>';
     });
@@ -107,7 +107,7 @@ function mostraMenuPrincipale() {
         '<div style="margin: auto; text-align: center; padding: 20px; display: flex; flex-direction: column; gap: 20px; align-items: center;">' +
         '<h1 style="color: #38bdf8; font-size: 2.5rem; margin-bottom: 5px;">🎮 Progetto Console</h1>' +
         '<p style="color: #94a3b8; font-size: 1.2rem; margin-bottom: 15px;">Seleziona la cartuccia da inserire nello slot:</p>' +
-        '<div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; max-width: 700px;">' +
+        '<div style="display: flex; flex-direction: column; gap: 12px; align-items: stretch; width: 100%; max-width: 420px;">' +
         bottoniHTML +
         '</div></div></div>';
 }
