@@ -1,5 +1,7 @@
 // --- CARTUCCIA 010: RETTANGOLI E QUADRATI ---
 // 10 tappe di geometria piana in sequenza. Layout compatibile con i browser vecchi (flex con prefissi, niente grid né gap).
+// LIVELLO 1: numeri piccoli (5 varianti per tappa, come prima).
+// LIVELLO 2: numeri grandi, problemi generati a caso (migliaia di combinazioni), pensato per l'uso della calcolatrice.
 
 window.UGOConsole.registerCartridge({
     id: 10,
@@ -11,7 +13,7 @@ window.UGOConsole.registerCartridge({
 
         // ===================== LE 10 TAPPE (5 varianti ciascuna, geometricamente coerenti) =====================
         // Nelle formule "A_1" diventa A con il pedice 1.
-        const LEVELS = [
+        const LEVELS1 = [
             // TAPPA 1 (*nuovo): Rettangolo, area e altezza -> base
             {
                 topic: "Tappa 1 — Rettangolo",
@@ -224,7 +226,57 @@ window.UGOConsole.registerCartridge({
                     '<text x="180" y="186" text-anchor="middle" fill="#dc2626" font-weight="800" font-size="16">A = ?</text></svg>'; }
             }
         ];
-        const N = LEVELS.length;
+
+        // ===================== LIVELLO 2: numeri grandi, problemi generati a caso =====================
+        // Ogni funzione restituisce una variante nuova e geometricamente coerente (risultati sempre interi).
+        function rndDiverso(minA, maxA, minB, maxB) {
+            let a = rnd(minA, maxA), b = rnd(minB, maxB), guard = 0;
+            while (a === b && guard < 50) { b = rnd(minB, maxB); guard++; }
+            return [a, b];
+        }
+        const GEN2 = [
+            // 1: A e h -> b
+            function() { const r = rndDiverso(12, 48, 15, 95); const h = r[0], b = r[1]; return { a: b * h, h: h, ans: b }; },
+            // 2: P e b -> h
+            function() { const r = rndDiverso(20, 90, 12, 80); const b = r[0], h = r[1]; return { p: 2 * (b + h), b: b, ans: h }; },
+            // 3: P quadrato -> A
+            function() { const l = rnd(12, 99); return { p: 4 * l, l: l, ans: l * l }; },
+            // 4: A quadrato -> P
+            function() { const l = rnd(12, 99); return { a: l * l, l: l, ans: 4 * l }; },
+            // 5: A e b -> P rettangolo
+            function() { const r = rndDiverso(12, 60, 11, 50); const b = r[0], h = r[1]; return { a: b * h, b: b, h: h, ans: 2 * (b + h) }; },
+            // 6: P e h -> A rettangolo
+            function() { const r = rndDiverso(12, 60, 12, 70); const h = r[0], b = r[1]; return { p: 2 * (b + h), h: h, b: b, ans: b * h }; },
+            // 7: quadrato equivalente a un rettangolo di altezza hr -> P rettangolo
+            function() {
+                for (let g = 0; g < 300; g++) {
+                    const l = rnd(12, 60), sq = l * l, ds = [];
+                    for (let d = 4; d < l; d++) { if (sq % d === 0) ds.push(d); }
+                    if (ds.length) {
+                        const hr = ds[rnd(0, ds.length - 1)];
+                        return { pq: 4 * l, hr: hr, ans: 2 * (sq / hr + hr) };
+                    }
+                }
+                return { pq: 96, hr: 12, ans: 120 };
+            },
+            // 8: isoperimetria rettangolo -> quadrato (br + hr = 2l, quindi il lato è intero)
+            function() { const l = rnd(15, 70); const hr = rnd(6, l - 3); const br = 2 * l - hr; return { ar: hr * br, hr: hr, br: br, p: 4 * l, l: l, ans: l * l }; },
+            // 9: b = 2h, A -> P
+            function() { const h = rnd(10, 70); return { a: 2 * h * h, h: h, b: 2 * h, ans: 6 * h }; },
+            // 10: diagonale (pari, così l'area è intera) -> A
+            function() { const d = 2 * rnd(10, 99); return { d: d, ans: d * d / 2 }; }
+        ];
+        // Il livello 2 riusa testi, figure e formule del livello 1, ma con varianti generate
+        const LEVELS2 = LEVELS1.map(function(l, i) {
+            const o = {};
+            for (const k in l) { if (Object.prototype.hasOwnProperty.call(l, k)) o[k] = l[k]; }
+            o.gen = GEN2[i];
+            return o;
+        });
+
+        let livello = 1;
+        let LEVELS = LEVELS1;
+        const N = LEVELS1.length;
 
         // ===================== COMPATIBILITÀ: pezzi di CSS con i prefissi per i browser vecchi =====================
         const FLEX = "display:-webkit-flex;display:flex;";
@@ -288,7 +340,7 @@ window.UGOConsole.registerCartridge({
                     </div>
                 </div>
 
-                <!-- Istruzioni iniziali -->
+                <!-- Istruzioni iniziali + scelta del livello -->
                 <div id="cp-start" class="cp-overlay">
                     <div class="cp-title">Rettangoli e quadrati</div>
                     <p>10 tappe di geometria piana, una dopo l'altra. Leggi il problema, guarda la figura e scrivi il risultato.</p>
@@ -298,7 +350,11 @@ window.UGOConsole.registerCartridge({
                         <li>Alla <b>tappa 10</b> vale solo il risultato esatto, senza approssimazioni.</li>
                         <li>I problemi cambiano a ogni partita.</li>
                     </ul>
-                    <button type="button" class="btn-start" id="cp-go">INIZIA</button>
+                    <div class="cp-lvtitle">Scegli il livello</div>
+                    <div class="cp-lvls">
+                        <button type="button" class="btn-start cp-lvbtn" id="cp-lv1">LIVELLO 1<small>numeri piccoli</small></button>
+                        <button type="button" class="btn-start cp-lvbtn cp-lv2" id="cp-lv2">LIVELLO 2<small>numeri grandi: serve la calcolatrice</small></button>
+                    </div>
                 </div>
 
                 <!-- Vittoria -->
@@ -315,7 +371,10 @@ window.UGOConsole.registerCartridge({
                     </div>
                     <h2 id="cp-vtitle">Percorso completato!</h2>
                     <p id="cp-vstats"></p>
-                    <button type="button" class="btn-start" id="cp-again">Gioca un'altra partita</button>
+                    <div class="cp-lvls">
+                        <button type="button" class="btn-start cp-lvbtn" id="cp-again">Gioca un'altra partita</button>
+                        <button type="button" class="btn-start cp-lvbtn cp-lv2" id="cp-menu">Cambia livello</button>
+                    </div>
                 </div>
 
                 <canvas id="cp-confetti"></canvas>
@@ -335,7 +394,8 @@ window.UGOConsole.registerCartridge({
 
             #cp-main { ${fl("1 1 0px")} min-height: 0; width: 100%; max-width: 780px; margin: 0 auto; ${FLEX}${COL} }
             #cp-left { ${fl("1.3 1 0px")} min-height: 0; ${FLEX}${COL} }
-            #cp-right { ${fl("1 1 0px")} min-height: 0; ${FLEX}${COL} margin-top: 6px; }
+            /* se lo schermo è troppo basso la colonna di destra scorre, invece di schiacciare i tasti */
+            #cp-right { ${fl("1 1 0px")} min-height: 0; ${FLEX}${COL} margin-top: 6px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 
             /* barra delle 10 tappe */
             #cp-stepper { ${fl("0 0 auto")} ${FLEX}${ROW} margin-bottom: 6px; }
@@ -392,7 +452,7 @@ window.UGOConsole.registerCartridge({
             .cp-row { ${fl("1 1 0px")} min-height: 0; ${FLEX}${ROW} margin-bottom: 6px; }
             .cp-row:last-child { margin-bottom: 0; }
             .cp-key { ${fl("1 1 0px")} min-width: 0; min-height: 0; margin: 0 6px 0 0; padding: 0; background: #334155; color: #fff; border: none; border-radius: 10px;
-                font-weight: bold; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+                font-weight: bold; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; line-height: 1; overflow: hidden;
                 font-size: 4.4vh; font-size: clamp(1.1rem, 4.6vh, 1.8rem); }
             .cp-row .cp-key:last-child { margin-right: 0; }
             .cp-key:active { background: #475569; }
@@ -403,22 +463,26 @@ window.UGOConsole.registerCartridge({
             #cp-kside .cp-ok { ${fl("3 1 0px")} background: #16a34a; font-size: 2.2vh; font-size: clamp(0.72rem, 2.3vh, 1rem); letter-spacing: 0.3px; }
             #cp-kside .cp-ok:active { background: #15803d; }
 
-            /* calcolatrice: prende il posto del tastierino */
-            #cp-calc { ${fl("1 1 0px")} min-height: 0; ${FLEX}${COL} width: 100%; max-width: 420px; margin: 0 auto; background: #1e293b; border-radius: 12px; padding: 6px; box-sizing: border-box; }
+            /* calcolatrice: prende il posto del tastierino.
+               Altezza minima garantita: se lo schermo è troppo basso scorre la colonna di destra, i tasti non si schiacciano.
+               La dimensione dei numeri viene adattata via JavaScript (fitCalc) in base allo spazio reale dei tasti. */
+            #cp-calc { ${fl("1 1 0px")} min-height: 250px; ${FLEX}${COL} width: 100%; max-width: 420px; margin: 0 auto; background: #1e293b; border-radius: 12px; padding: 6px; box-sizing: border-box; }
             #cp-cdisp { ${fl("0 0 auto")} background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 4px 10px; text-align: right; color: #f8fafc;
-                font-weight: 700; font-family: 'Courier New', monospace; margin-bottom: 5px; overflow: hidden; white-space: nowrap; font-size: 1.15rem; }
-            #cp-cbody { ${fl("1 1 0px")} min-height: 0; ${FLEX}${COL} }
-            .cp-crow { ${fl("1 1 0px")} min-height: 0; ${FLEX}${ROW} margin-bottom: 4px; }
+                font-weight: 700; font-family: 'Courier New', monospace; margin-bottom: 5px; overflow: hidden; white-space: nowrap; font-size: 1.15rem; line-height: 1.3;
+                min-height: 1.3em; }
+            #cp-cbody { ${fl("1 1 0px")} min-height: 165px; ${FLEX}${COL} }
+            .cp-crow { ${fl("1 1 0px")} min-height: 32px; ${FLEX}${ROW} margin-bottom: 4px; }
             .cp-c { ${fl("1 1 0px")} min-width: 0; min-height: 0; margin: 0 4px 0 0; padding: 0; background: #334155; color: #fff; border: none; border-radius: 8px;
-                font-weight: 700; cursor: pointer; touch-action: manipulation; font-size: 1rem; font-size: clamp(0.8rem, 2.8vh, 1.15rem); }
+                font-weight: 700; cursor: pointer; touch-action: manipulation; font-size: 1rem; line-height: 1; overflow: hidden; white-space: nowrap;
+                -webkit-tap-highlight-color: transparent; }
             .cp-crow .cp-c:last-child { margin-right: 0; }
             .cp-c:active { background: #475569; }
             .cp-cop { background: #0284c7; }
             .cp-cclr { background: #dc2626; }
             .cp-ceq { background: #16a34a; }
             .cp-cwide { ${fl("2 1 0px")} }
-            #cp-cuse { ${fl("0 0 auto")} background: #38bdf8; color: #0f172a; border: none; border-radius: 8px; padding: 6px; font-weight: 800; cursor: pointer;
-                touch-action: manipulation; font-size: 0.8rem; margin-top: 2px; }
+            #cp-cuse { ${fl("0 0 auto")} background: #38bdf8; color: #0f172a; border: none; border-radius: 8px; padding: 8px 6px; font-weight: 800; cursor: pointer;
+                touch-action: manipulation; font-size: 0.8rem; margin-top: 2px; line-height: 1.2; }
 
             /* schermate sopra il gioco */
             .cp-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.96); z-index: 20; ${FLEX}${COL}${CEN}
@@ -431,6 +495,11 @@ window.UGOConsole.registerCartridge({
                 line-height: 1.4; font-size: 2.3vh; font-size: clamp(0.82rem, 2.4vh, 1rem); }
             .cp-rules li { margin: 5px 0; }
             .cp-overlay .btn-start { background: #2563eb; box-shadow: 0 4px #1e3a8a; }
+            .cp-overlay .btn-start.cp-lv2 { background: #7c3aed; box-shadow: 0 4px #4c1d95; }
+            .cp-lvtitle { color: #e2e8f0; font-weight: 800; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.5px; }
+            .cp-lvls { ${FLEX}${ROW} -webkit-flex-wrap: wrap; flex-wrap: wrap; -webkit-justify-content: center; justify-content: center; }
+            .cp-lvbtn { margin: 6px 7px; padding: 10px 18px; cursor: pointer; line-height: 1.2; }
+            .cp-lvbtn small { display: block; font-size: 0.68rem; font-weight: 600; opacity: 0.9; margin-top: 3px; letter-spacing: 0; text-transform: none; }
             #cp-victory { background: rgba(15, 23, 42, 0.9); }
             #cp-trophy { -webkit-transform-origin: center; }
             #cp-confetti { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 40; }
@@ -536,7 +605,7 @@ window.UGOConsole.registerCartridge({
 
         // ===================== STATO =====================
         let step = 0;                // tappa corrente (0-9)
-        let sel = [];                // variante scelta per ogni tappa
+        let sel = [];                // variante scelta (oggetto) per ogni tappa
         let ultimaFirma = "";
         let sbagliati = 0;           // errori su questa tappa
         let totErrori = 0;
@@ -555,17 +624,22 @@ window.UGOConsole.registerCartridge({
 
         function aggiornaConsole() {
             if (!window.UGOConsole) return;
-            window.UGOConsole.setTitle("Rettangoli e quadrati");
+            window.UGOConsole.setTitle("Rettangoli e quadrati — Livello " + livello);
             window.UGOConsole.setScore(primoTentativo);
             if (window.UGOConsole.setTimerLabel) window.UGOConsole.setTimerLabel("Tappa");
             window.UGOConsole.setTimer(Math.min(step + 1, N) + "/" + N);
         }
 
+        function scegliVariante(l) {
+            if (l.gen) return l.gen();
+            return l.variants[rnd(0, l.variants.length - 1)];
+        }
+
         function generaCombinazione() {
             let combo = [], firma = "", guard = 0;
             do {
-                combo = LEVELS.map(function(l) { return rnd(0, l.variants.length - 1); });
-                firma = combo.join("-");
+                combo = LEVELS.map(scegliVariante);
+                firma = livello + JSON.stringify(combo);
                 guard++;
             } while (firma === ultimaFirma && guard < 30);
             ultimaFirma = firma;
@@ -605,7 +679,7 @@ window.UGOConsole.registerCartridge({
 
         function disegnaTappa() {
             const L = LEVELS[step];
-            const v = L.variants[sel[step]];
+            const v = sel[step];
             sbagliati = 0;
             ans = "";
             calcAperta = false;
@@ -636,13 +710,19 @@ window.UGOConsole.registerCartridge({
             disegnaTappa();
         }
 
+        function impostaLivello(n) {
+            livello = n;
+            LEVELS = (n === 2) ? LEVELS2 : LEVELS1;
+            ultimaFirma = "";
+        }
+
         // ===================== VERIFICA =====================
         function verifica() {
             if (fase !== 'gioco') return;
             const raw = ans.trim();
             if (!raw) return;
             const L = LEVELS[step];
-            const v = L.variants[sel[step]];
+            const v = sel[step];
 
             // tappa 10: niente valori approssimati
             if (L.noApprox && /[.,]/.test(raw)) {
@@ -712,7 +792,27 @@ window.UGOConsole.registerCartridge({
         // ===================== CALCOLATRICE =====================
         let cCur = "0", cPrev = null, cOp = null, cReset = false;
         function azzeraCalc() { cCur = "0"; cPrev = null; cOp = null; cReset = false; mostraCalc(); }
-        function mostraCalc() { el('cp-cdisp').textContent = cCur.replace('.', ','); }
+        function mostraCalc() {
+            const d = el('cp-cdisp');
+            d.textContent = cCur.replace('.', ',');
+            // numeri lunghi: display più piccolo, così non escono dal riquadro
+            const n = cCur.length;
+            d.style.fontSize = n > 14 ? '0.8rem' : (n > 11 ? '0.95rem' : (n > 9 ? '1.05rem' : '1.15rem'));
+        }
+        // Adatta la grandezza dei numeri dei tasti allo spazio realmente disponibile (altezza e larghezza del tasto)
+        function fitCalc() {
+            if (!calcAperta) return;
+            const calc = el('cp-calc');
+            const righe = calc.getElementsByClassName('cp-crow');
+            const tasti = calc.getElementsByClassName('cp-c');
+            if (!righe.length || !tasti.length) return;
+            const h = righe[0].clientHeight;
+            const w = tasti[1] ? tasti[1].clientWidth : tasti[0].clientWidth;
+            if (!h || !w) return;
+            let fs = Math.floor(Math.min(h * 0.55, w * 0.5));
+            fs = Math.max(11, Math.min(fs, 26));
+            for (let i = 0; i < tasti.length; i++) tasti[i].style.fontSize = fs + 'px';
+        }
         function arrotonda(x) { return Math.round(x * 100000) / 100000; }
         function calcola(a, b, op) {
             if (op === '+') return a + b;
@@ -769,7 +869,11 @@ window.UGOConsole.registerCartridge({
         function calcApriChiudi() {
             if (fase !== 'gioco') return;
             calcAperta = !calcAperta;
-            if (calcAperta) { nascondi('cp-keys'); mostra('cp-calc'); }
+            if (calcAperta) {
+                nascondi('cp-keys'); mostra('cp-calc');
+                fitCalc();
+                schedule(fitCalc, 60);   // secondo passaggio, quando il layout è definitivo
+            }
             else { nascondi('cp-calc'); mostra('cp-keys'); }
         }
         function calcUsa() {
@@ -868,7 +972,7 @@ window.UGOConsole.registerCartridge({
             if (primoTentativo === N) titolo = "Impeccabile!";
             else if (primoTentativo >= 8) titolo = "Bravissimo!";
             el('cp-vtitle').textContent = titolo;
-            el('cp-vstats').innerHTML = "Hai completato tutte e " + N + " le tappe di geometria.<br>Risolte al primo tentativo: <b>" + primoTentativo + "</b> su " + N +
+            el('cp-vstats').innerHTML = "Hai completato tutte e " + N + " le tappe di geometria (livello " + livello + ").<br>Risolte al primo tentativo: <b>" + primoTentativo + "</b> su " + N +
                 ". Errori totali: <b>" + totErrori + "</b>.";
             mostra('cp-victory');
             aggiornaConsole();
@@ -908,16 +1012,29 @@ window.UGOConsole.registerCartridge({
             nuovaPartita();
         });
 
-        el('cp-go').addEventListener('click', function() {
+        // Scelta del livello all'inizio
+        function iniziaLivello(n) {
             initAudio();
+            impostaLivello(n);
             nascondi('cp-start');
             nuovaPartita();
             avviaMusica();
-        });
+        }
+        el('cp-lv1').addEventListener('click', function() { iniziaLivello(1); });
+        el('cp-lv2').addEventListener('click', function() { iniziaLivello(2); });
+
         el('cp-again').addEventListener('click', function() {
             initAudio(); suonoNuova();
             nuovaPartita();
             avviaMusica();
+        });
+        // Dalla schermata finale si può tornare alla scelta del livello
+        el('cp-menu').addEventListener('click', function() {
+            gettone++;
+            confettiStop();
+            nascondi('cp-victory');
+            fase = 'start';
+            mostra('cp-start');
         });
         el('cp-trophy').addEventListener('click', function() { if (fase === 'fine') confettiStart(); });
 
@@ -934,7 +1051,7 @@ window.UGOConsole.registerCartridge({
         };
         window.addEventListener('keydown', window.__cpKeyHandler);
 
-        const onResize = function() { if (cfRaf) cfPrepara(); };
+        const onResize = function() { if (cfRaf) cfPrepara(); fitCalc(); };
         window.addEventListener('resize', onResize);
 
         // ===================== PULIZIA ALL'USCITA =====================
@@ -955,7 +1072,8 @@ window.UGOConsole.registerCartridge({
             });
         }
 
-        // schermata iniziale: il gioco è pronto dietro le istruzioni
+        // schermata iniziale: il gioco è pronto dietro la scelta del livello
+        impostaLivello(1);
         sel = generaCombinazione();
         step = 0;
         disegnaTappa();
