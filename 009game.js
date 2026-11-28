@@ -10,7 +10,7 @@ window.UGOConsole.registerCartridge({
         const slot = document.getElementById('cartridge-slot');
         let alive = true; // diventa false quando si esce dal gioco
 
-        const DURATA = 120; // secondi di un match (prima versione)
+        const DURATA = 300; // secondi di un match (prima versione)
 
         // ===================== LE CARTE =====================
         // Formato: "PAROLA|vietata 1|vietata 2|vietata 3". Il numero della carta è la posizione nell'elenco (0001, 0002, ...).
@@ -21,6 +21,7 @@ window.UGOConsole.registerCartridge({
             "ACCIAIO|ferro|metallo|duro",
             "ACQUA|pioggia|mare|bere",
             "ACQUEDOTTI|archi|romani|bere",
+            "AFRICA|continente|Sahara|Egitto",
             "AGAVE|fiore|aloe|unico",
             "AGNELLO|animale|pasqua|sacrificio",
             "AGOSTO|mese|dodici|anno",
@@ -28,7 +29,9 @@ window.UGOConsole.registerCartridge({
             "ALGA|mare|pianta|scoglio",
             "ALI|uccello|volare|angelo",
             "ALITO|bocca|respiro|fresco",
+            "ALLEGRIA|felicità|tristezza|emozione",
             "ALLUCE|dito|piede|pollice",
+            "AMERICA|continente|Colombo|Stati Uniti",
             "AMICO|tesoro|compagno|persona",
             "AMORE|emozione|cuore|sentimento",
             "ANDROID|sistema operativo|smartphone|windows",
@@ -38,12 +41,15 @@ window.UGOConsole.registerCartridge({
             "APE|miele|insetto|volare",
             "APRILE|mese|dodici|anno",
             "AQUILA|uccello|rapace|predatore",
+            "ARCO|archittettura|cerchio|acquedotti",
             "ARCOBALENO|colori|luce|pioggia",
             "ARIA|vento|ossigeno|vita",
             "ARMADIO|vestiti|mobile|stanza",
             "ARMI|guerra|pistola|coltello",
             "ARTIGLIO|gatto|felino|zampa",
+            "ASIA|continente|Cina|Est",
             "ASTRONAUTA|NAVICELLA|spazio|luna",
+            "AUSTRALIA|continente|canguro|Oceania",
             "AZIENDA|lavoro|fabbrica|società",
             "BALCONE|ringhiera|finestra|palazzo",
             "BAR|caffè|cappuccino|cornetto",
@@ -53,6 +59,7 @@ window.UGOConsole.registerCartridge({
             "BANCOMAT|soldi|pagare|carta",
             "BARBA|peli|faccia|guance",
             "BASILICO|foglia|sugo|pesto",
+            "BATTERIA|strumento|ritmo|musica",
             "BERNOCCOLO|testa|colpo|gonfiore",
             "BERSAGLIO|freccette|centro|mira",
             "BIBLIOTECA|libri|volumi|prestito",
@@ -71,6 +78,7 @@ window.UGOConsole.registerCartridge({
             "BRISCOLA|carte|gioco|carico",
             "BROCCOLO|pianta|verdura|cibo",
             "BRODO|bere|mangiare|cibo",
+            "BUCO|vuoto|cavità|rompere",
             "BUGIA|verità|raccontare|mentire",
             "BURRO|condimento|latte|grasso",
             "BUSTA|spesa|sacchetto|plastica",
@@ -87,6 +95,7 @@ window.UGOConsole.registerCartridge({
             "CANE|abbaiare|guinzaglio|animale",
             "CANTANTE|musica|voce|strumento",
             "CAPELLI|testa|parrucchiere|acconciatura",
+            "CAPPELLO|testa|vestito|freddo",
             "CASA|appartamento|palazzo|villa",
             "CASSETTO|mobile|comodino|segreto",
             "CASTELLO|fiaba|favola|principessa",
@@ -101,14 +110,17 @@ window.UGOConsole.registerCartridge({
             "CHIODO|martello|ferro|attaccare",
             "CHITARRA|strumento|corde|musica",
             "CIELO|alto|azzurro|sole",
+            "CINA|stato|Pechino|Asia",
             "CINEMA|film|atlantic|pop corn",
             "CINGHIALE|maiale|selvatico|animale",
             "CIPRESSO|cimitero|albero|pino",
             "CITTÀ|Roma|Napoli|Milano",
             "CLESSIDRA|tempo|scorrere|sabbia",
             "COLAZIONE|mattina|mangiare|latte",
+            "COLLA|costruire|attaccare|appiccicare",
             "COLLANA|gioiello|bracciale|orecchini",
             "COLLINA|montagna|pianura|altezza",
+            "COLLO|corpo|testa|spalle",
             "COLTELLO|forchetta|cucchiaio|mangiare",
             "COMPUTER|schermo|videogiochi|tastiera",
             "COMUNIONE|chiesa|ostia|prima",
@@ -120,6 +132,7 @@ window.UGOConsole.registerCartridge({
             "COZZA|impepata|vongole|mare",
             "CRAVATTA|giacca|camicia|uomo",
             "CREPUSCOLO|alba|tramonto|sole",
+            "CUBO|forma|dado|solido",
             "CUCINA|casa|stanza|cibo",
             "CUCCHIAIO|forchetta|coltello|mangiare",
             "CULLA|bambino|letto|dormire",
@@ -180,12 +193,14 @@ window.UGOConsole.registerCartridge({
             "FINESTRA|affacciarsi|vetro|casa",
             "FIORE|prato|margherita|ape",
             "FIUME|acqua|scorrere|Tevere",
+            "FLAUTO|strumento|musica|soffiare",
             "FOGLIA|albero|verde|autunno",
             "FOGLIO|carta|quaderno|libro",
             "FORCHETTA|coltello|cucchiaio|posate",
             "FORMA|geometria|quadrato|triangolo",
             "FORMAGGIO|latte|derivato|mangiare",
             "FORMICA|animale|insetto|grillo",
+            "FRANCIA|stato|Parigi|Torre Eiffel",
             "FREDDO|caldo|tiepido|temperatura",
             "FRISBEE|gioco|disco|lanciare",
             "FRUTTIVENDOLO|banane|pesce|mele",
@@ -201,6 +216,7 @@ window.UGOConsole.registerCartridge({
             "GELATO|dolce|freddo|gusti",
             "GENNAIO|mese|anno|dodici",
             "GENERO|figlia|padre|marito",
+            "GERMANIA|stato|Berlino|Europa",
             "GESSETTO|lavagna|scrivere|scuola",
             "GHIACCIO|acqua|freddo|freezer",
             "GIACCA|vestito|pantaloni|cravatta",
@@ -212,6 +228,7 @@ window.UGOConsole.registerCartridge({
             "GIUGNO|mese|dodici|anno",
             "GOOGLE|motore di ricerca|azienda|internet",
             "GOAL|calcio|rete|pallone",
+            "GRECIA|stato|Atene|Mediterraneo",
             "GREGGE|pecore|pastore|recinto",
             "GUANTO|mano|dita|freddo",
             "GUERRA|armi|soldati|mondiale",
@@ -233,6 +250,7 @@ window.UGOConsole.registerCartridge({
             "IO|me|pronome personale|egoismo",
             "ISOLA|mare|oceano|terra",
             "ISTRICE|animale|aculei|mammifero",
+            "ITALIA|stato|penisola|Roma",
             "JEANS|pantaloni|blu|cotone",
             "JEEP|macchina|auto|marca",
             "JUDO|sport|karate|kimono",
@@ -268,6 +286,7 @@ window.UGOConsole.registerCartridge({
             "LINUX|sistema operativo|windows|android",
             "LOGICA|ragionamento|matematica|pensiero",
             "LOTTA|guerra|battaglia|botte",
+            "LUCCIOLA|animale|insetto|luce",
             "LUCE|sole|lampada|torcia",
             "LUCERTOLA|rettile|geco|coda",
             "LUGLIO|mese|dodici|anno",
@@ -288,6 +307,7 @@ window.UGOConsole.registerCartridge({
             "MARGHERITA|fiore|prato|pianta",
             "MARTE|pianeta|terra|sole",
             "MARTEDÌ|settimana|sette|giorno",
+            "MARTELLO|strumento|chiodi|lavoro",
             "MARZO|mese|dodici|anno",
             "MATITA|scrivere|disegnare|legno",
             "MATTINA|sera|pomeriggio|giorno",
@@ -336,6 +356,7 @@ window.UGOConsole.registerCartridge({
             "OMBELICO|corpo|pancia|cordone",
             "OMBRA|luce|nero|sole",
             "OMBRELLO|pioggia|ripararsi|sole",
+            "ONDA|mare|ascua|tsunami",
             "ORECCHINI|collana|bracciale|gioielli",
             "OROLOGIO|tempo|lancette|polso",
             "ORSO|animale|caverna|miele",
@@ -354,6 +375,8 @@ window.UGOConsole.registerCartridge({
             "PANNA|montata|gelato|fragole",
             "PARENTE|figlio|genitore|nonno",
             "PECCATO|regola|confessione|pietra",
+            "PELLE|umani|peli|corpo",
+            "PELO|capelli|barba|pelle",
             "PENNA|inchiostro|scrivere|carta",
             "PENTOLA|cuocere|cucinare|uovo",
             "PELI|mammiferi|capelli|pelle",
@@ -362,6 +385,7 @@ window.UGOConsole.registerCartridge({
             "PIANETI|spazio|Terra|Sole",
             "PIATTO|posate|cibo|tavola",
             "PIAZZA|strada|larga|città",
+            "PICCIONE|uccello|ali|becco",
             "PIDOCCHIO|testa|capelli|scuola",
             "PIEDE|scarpa|gamba|alluce",
             "PIETRA|roccia|lanciare|età",
@@ -376,6 +400,7 @@ window.UGOConsole.registerCartridge({
             "PISTOLA|sparare|proiettili|assassino",
             "PIZZA|Napoli|pomodoro|margherita",
             "POESIA|versi|strofe|metafore",
+            "POLIZIA|agente|multa|difendere",
             "POLLICE|dito|mano|like",
             "POLPO|mare|animale|insalata",
             "POLTRONA|chiacchiere|divano|sedersi",
@@ -426,6 +451,7 @@ window.UGOConsole.registerCartridge({
             "RUGGINE|ferro|acqua|rosso",
             "RUGGITO|leone|tigre|verso",
             "RUOTA|cerchio|rotolare|macchina",
+            "RUSSIA|stato|Mosca|comunismo",
             "SABATO|settimana|sette|giorno",
             "SAGITTARIO|segno|oroscopo|arco",
             "SALIVA|sputo|bocca|acqua",
@@ -444,7 +470,7 @@ window.UGOConsole.registerCartridge({
             "SCOPA|carte|spazzare|pavimento",
             "SCORPIONE|animale|veleno|aracnide",
             "SCOUT|gavette|campeggio|tenda",
-            "SCUOLA|elementare|imparare|media",
+            "SCUOLA|elementare|libri|studio",
             "SERPENTE|rettile|vipera|strisciare",
             "SETTEMBRE|mese|dodici|anno",
             "SICILIA|regione|isola|Palermo",
@@ -454,6 +480,7 @@ window.UGOConsole.registerCartridge({
             "SOGNO|dormire|notte|mente",
             "SOLE|luce|cielo|caldo",
             "SPAGHETTI|salsa|pasta|farina",
+            "SPAGNA|Stato|Madrid|Europa",
             "SPECCHIO|riflesso|bagno|immagine",
             "SPIAGGIA|sabbia|mare|estate",
             "SPORT|attività|salute|movimento",
@@ -461,13 +488,16 @@ window.UGOConsole.registerCartridge({
             "STELLA|notte|luce|cielo",
             "STIVALI|scarpe|piedi|alti",
             "STORIA|racconto|studio|materia",
+            "STRADA|via|camminare|città",
             "SUONO|orecchio|rumore|sentire",
             "SUORA|religione|dio|donna",
             "SUPERMAN|supereroi|mantello|poteri",
             "TABACCO|sigarette|fumare|vizio",
             "TABLET|dito|schermo|dispositivo",
             "TAPPETO|pavimento|piedi|casa",
-            "TATTO|5 sensi|dita|toccare",
+            "TAPPO|bottiglia|sughero|chiudere",
+            "TASTO|bottone|pulsante|pianoforte",
+            "TATTO|cinque sensi|dita|toccare",
             "TATUAGGIO|disegno|corpo|inchiostro",
             "TAVOLO|sedie|pranzo|tovaglia",
             "TELEFONO|smartphone|chiamate|messaggi",
@@ -486,6 +516,8 @@ window.UGOConsole.registerCartridge({
             "TORTA|dolce|zucchero|pan di spagna",
             "TOVAGLIOLO|tavola|piatto|pulire",
             "TRAMONTO|alba|sole|occidente",
+            "TRISTEZZA|umore|felicità|emozione",
+            "TROMBA|strumento|musica|ottone",
             "TSUNAMI|maremoto|acqua|terremoto",
             "UCCELLO|animale|ali|volare",
             "UDITO|cinque|sensi|orecchio",
@@ -518,6 +550,7 @@ window.UGOConsole.registerCartridge({
             "VETRO|trasparente|bottiglia|bicchiere",
             "VICOLO|strada|piccolo|piedi",
             "VINO|uva|alcolico|feste",
+            "VIOLINO|musica|strumento|arco",
             "VIRTÙ|vizio|dote|positivo",
             "VITA|genitori|terra|malattie",
             "VIZIO|virtù|fumo|alcol",
@@ -713,7 +746,7 @@ window.UGOConsole.registerCartridge({
             #pf-wordbox { ${fl("1.2 1 0px")} min-height: 0; ${FLEX}${CEN} background: #be123c; padding: 4px 8px; }
             #pf-word { color: #fff; font-weight: 900; letter-spacing: 1px; text-align: center; white-space: nowrap; max-width: 100%; }
             #pf-taboos { ${fl("2.2 1 0px")} min-height: 0; ${FLEX}${COL} color: #1e293b; padding: 4px 0; }
-            .pf-t { ${fl("1 1 0px")} min-height: 0; ${FLEX}${CEN} font-weight: bold; text-transform: uppercase; white-space: nowrap; overflow: hidden;
+            .pf-t { ${fl("1 1 0px")} min-height: 0; ${FLEX}${CEN} font-weight: bold; text-transform: uppercase; white-space: normal; line-height: 1.05; font-size: 13vh; word-break: break-word;
                 padding: 0 10px; border-top: 1px solid #e2e8f0; }
             .pf-t:first-child { border-top: none; }
             #pf-cid { position: absolute; right: 10px; bottom: 4px; font-size: 0.8rem; color: #94a3b8; font-weight: bold; }
@@ -823,7 +856,7 @@ window.UGOConsole.registerCartridge({
         function adattaTesto(e, maxPx, minPx, larghezza) {
             let s = maxPx;
             e.style.fontSize = s + 'px';
-            while (s > minPx && e.scrollWidth > larghezza) {
+            while (s > minPx && (e.scrollWidth > larghezza || e.scrollHeight > e.clientHeight)) {
                 s -= 2;
                 e.style.fontSize = s + 'px';
             }
@@ -964,7 +997,7 @@ window.UGOConsole.registerCartridge({
                 adattaTesto(el('pf-word'), Math.max(24, Math.min(64, Math.floor(alto * 0.13))), 14, larg);
                 const righe = tb.children;
                 for (let i = 0; i < righe.length; i++) {
-                    adattaTesto(righe[i], Math.max(16, Math.min(34, Math.floor(alto * 0.075))), 11, larg);
+                    adattaTesto(righe[i], Math.max(16, Math.min(144, Math.floor(alto * 0.36))), 36, larg);
                 }
             } else {
                 mostra('pf-fine');
